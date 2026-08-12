@@ -103,14 +103,16 @@
     z-index:250;
   }
   .help-fab-btn{
-    width:56px;
-    height:56px;
-    border-radius:50%;
+    position:relative;
+    height:52px;
+    padding:0 22px;
+    border-radius:26px;
     border:none;
     background:var(--vermelho);
     color:#fff;
-    font-size:1.6rem;
+    font-size:.95rem;
     font-weight:700;
+    font-family:inherit;
     cursor:pointer;
     box-shadow:0 4px 14px rgba(0,0,0,.28);
     display:flex;
@@ -118,7 +120,19 @@
     justify-content:center;
     line-height:1;
   }
+  .help-fab-btn::after{
+    content:"";
+    position:absolute;
+    right:22px;
+    bottom:-7px;
+    width:16px;
+    height:16px;
+    background:var(--vermelho);
+    clip-path:polygon(0 0, 100% 0, 0 100%);
+    transition:background .15s;
+  }
   .help-fab-btn:hover{background:#a81a1e;}
+  .help-fab-btn:hover::after{background:#a81a1e;}
   .help-fab-menu{
     position:absolute;
     right:0;
@@ -1493,7 +1507,7 @@
       <span>Microsoft Teams</span>
     </a>
   </div>
-  <button type="button" class="help-fab-btn" id="help-fab-btn" title="Precisa de ajuda?" aria-label="Precisa de ajuda?">?</button>
+  <button type="button" class="help-fab-btn" id="help-fab-btn" title="Precisa de ajuda?" aria-label="Precisa de ajuda?">Fale comigo</button>
 </div>
 <script>
   (function(){
