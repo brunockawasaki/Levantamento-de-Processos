@@ -709,8 +709,6 @@
 
   <div class="actions">
     <button type="button" class="btn btn-primary" id="btn-enviar">Enviar Respostas (gerar Word)</button>
-    <button type="button" class="btn btn-secondary" id="btn-download-txt">Baixar respostas (.txt)</button>
-    <button type="button" class="btn btn-secondary" id="btn-print">Salvar em PDF</button>
     <button type="button" class="btn btn-outline" id="btn-clear">Limpar tudo</button>
   </div>
   <div id="enviar-status" class="hidden" style="margin:-14px 0 20px; font-size:.85rem; color:var(--cinza);"></div>
@@ -718,7 +716,6 @@
   <div class="card terminou">
     <h2>Terminou?</h2>
     <p>Releia rapidinho suas respostas e clique em "Enviar Respostas (gerar Word)" — isso monta automaticamente o rascunho do POP já no modelo oficial, preenchido com o que você respondeu. Abra o Word gerado, dê uma conferida e envie para a equipe de Processos.</p>
-    <p>Se preferir, também dá para baixar as respostas em .txt ou salvar esta página em PDF.</p>
     <p>Código do documento, fluxo no Bizagi, aprovações e controle de emissão são preenchidos pela equipe de Processos/Qualidade — você não precisa se preocupar com essa parte.</p>
   </div>
 
@@ -1347,30 +1344,6 @@
       statusEl.textContent = "Não foi possível gerar o Word: " + err.message;
       statusEl.classList.remove("hidden");
     }
-  });
-
-  document.getElementById("btn-download-txt").addEventListener("click", function(){
-    var missing = getMissingRequired();
-    highlightMissing(missing);
-    var text = buildExportText();
-    var tarefa = sanitizeFileName(document.getElementById("id_tarefa").value);
-    var data = document.getElementById("id_data").value || todayISO();
-    var filename = "Levantamento - " + tarefa + " - " + data + ".txt";
-    var blob = new Blob([text], {type:"text/plain;charset=utf-8"});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  });
-
-  document.getElementById("btn-print").addEventListener("click", function(){
-    var missing = getMissingRequired();
-    highlightMissing(missing);
-    window.print();
   });
 
   document.getElementById("btn-clear").addEventListener("click", function(){
