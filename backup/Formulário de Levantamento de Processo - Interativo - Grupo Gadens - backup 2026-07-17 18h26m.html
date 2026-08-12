@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Levantamento de Processo — Base para POP | Grupo Gadens</title>
+<style>
+  :root{
+    --vermelho:#C0272D;
+    --cinza:#58595B;
+    --fundo:#F2F2F2;
+    --borda:#B7B7B7;
+    --dica:#767171;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:0;
+    background:var(--fundo);
+    color:#2b2b2b;
+    font-family:Calibri, "Segoe UI", Arial, sans-serif;
+    line-height:1.4;
+    padding-top:34px;
+  }
+  .container{
+    max-width:900px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+  .card{
+    background:#fff;
+    border:1px solid var(--borda);
+    border-radius:8px;
+    padding:20px 24px;
+    margin-bottom:20px;
+  }
+
+  /* Barra de progresso fixa */
+  #progress-bar-container{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:26px;
+    background:#e2e2e2;
+    z-index:1000;
+    border-bottom:1px solid var(--borda);
+  }
+  #progress-bar-fill{
+    height:100%;
+    width:0%;
+    background:var(--vermelho);
+    transition:width .25s ease;
+  }
+  #progress-bar-label{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.78rem;
+    color:#fff;
+    text-shadow:0 0 3px rgba(0,0,0,.55);
+    font-weight:600;
+    letter-spacing:.3px;
+    pointer-events:none;
+  }
+
+  /* Cabeçalho */
+  header.top{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:20px;
+  }
+  header.top img{
+    height:56px;
+    width:auto;
+    flex-shrink:0;
+  }
+  header.top h1{
+    margin:0;
+    color:var(--vermelho);
+    font-size:1.5rem;
+  }
+  header.top p{
+    margin:4px 0 0;
+    color:var(--cinza);
+    font-size:.92rem;
+  }
+
+  .instrucoes{
+    background:#fdf3f3;
+    border-left:6px solid var(--vermelho);
+    border-radius:4px;
+    padding:14px 18px;
+  }
+  .instrucoes h2{
+    margin:0 0 8px;
+    font-size:1rem;
+    color:var(--vermelho);
+  }
+  .instrucoes ul{
+    margin:0;
+    padding-left:20px;
+  }
+  .instrucoes li{
+    margin-bottom:5px;
+    font-size:.92rem;
+  }
+
+  /* Banner de pendências */
+  #pending-banner{
+    background:#fff4f4;
+    border:1px solid var(--vermelho);
+    color:#7a1418;
+    border-radius:6px;
+    padding:12px 16px;
+    margin-bottom:16px;
+    font-size:.9rem;
+  }
+  #pending-banner.hidden{display:none;}
+  #pending-banner strong{display:block;margin-bottom:6px;}
+  #pending-banner ul{margin:0;padding-left:20px;}
+
+  /* Barra de seção estilo Word */
+  .section-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--cinza);
+    border-left:6px solid var(--vermelho);
+    border-radius:4px;
+    padding:10px 16px;
+    margin-top:26px;
+    margin-bottom:10px;
+  }
+  .section-bar h3{
+    margin:0;
+    color:#fff;
+    font-size:.98rem;
+    font-weight:600;
+  }
+  .section-bar .req-mark{
+    color:#ffd7d7;
+    font-weight:700;
+  }
+  .section-bar .tag{
+    color:#e4e4e4;
+    font-size:.68rem;
+    white-space:nowrap;
+    opacity:.9;
+    font-style:italic;
+  }
+
+  .bloco{margin-bottom:6px;}
+  .dica{
+    color:var(--dica);
+    font-style:italic;
+    font-size:.85rem;
+    margin:0 0 8px;
+  }
+
+  textarea{
+    width:100%;
+    min-height:88px;
+    padding:8px 10px;
+    border:1px solid var(--borda);
+    border-radius:4px;
+    font-family:inherit;
+    font-size:.93rem;
+    resize:vertical;
+    background:#fff;
+  }
+  textarea.field-missing, input.field-missing, select.field-missing, .table-wrap.field-missing{
+    outline:2px solid var(--vermelho);
+    outline-offset:1px;
+  }
+  /* Caixas com auto-expansão de altura (crescem conforme o texto, sem esconder nada) */
+  textarea.autogrow{
+    resize:none;
+    overflow:hidden;
+  }
+
+  .table-wrap{
+    overflow-x:auto;
+    border-radius:4px;
+  }
+  table.dyn-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:8px;
+    min-width:420px;
+  }
+  table.dyn-table th, table.dyn-table td{
+    border:1px solid var(--borda);
+    padding:6px 8px;
+    font-size:.88rem;
+    text-align:left;
+    vertical-align:top;
+  }
+  table.dyn-table thead th{
+    background:#ECECEC;
+    color:var(--cinza);
+    font-weight:600;
+  }
+  table.dyn-table col.col-num, table.dyn-table th.col-num, table.dyn-table td.col-num{
+    width:38px;
+    text-align:center;
+    color:var(--cinza);
+    font-weight:600;
+  }
+  table.dyn-table th.col-del, table.dyn-table td.col-del{
+    width:30px;
+    text-align:center;
+    padding:2px;
+  }
+  tr.example-row td{
+    background:#EFEFEF;
+    color:var(--dica);
+    font-style:italic;
+  }
+  table.dyn-table td input[type="text"]{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-family:inherit;
+    font-size:.9rem;
+    padding:4px;
+  }
+  table.dyn-table td input[type="text"]:focus{
+    outline:1px solid var(--vermelho);
+    background:#fff;
+  }
+  table.dyn-table td textarea{
+    width:100%;
+    display:block;
+    min-height:24px;
+    border:none;
+    background:transparent;
+    font-family:inherit;
+    font-size:.9rem;
+    line-height:1.35;
+    padding:4px;
+  }
+  table.dyn-table td textarea:focus{
+    outline:1px solid var(--vermelho);
+    background:#fff;
+  }
+  .btn-del-row{
+    background:none;
+    border:none;
+    color:var(--vermelho);
+    cursor:pointer;
+    font-size:1rem;
+    line-height:1;
+    padding:2px 6px;
+  }
+  .btn-add-row{
+    background:#fff;
+    border:1px dashed var(--cinza);
+    color:var(--cinza);
+    border-radius:4px;
+    padding:6px 12px;
+    font-size:.85rem;
+    cursor:pointer;
+    margin-bottom:6px;
+  }
+  .btn-add-row:hover{background:#f2f2f2;}
+
+  /* Identificação */
+  .id-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px 20px;
+  }
+  .id-field{display:flex; flex-direction:column;}
+  .id-field label{
+    font-size:.85rem;
+    font-weight:600;
+    color:var(--cinza);
+    margin-bottom:4px;
+  }
+  .id-field input[type="text"], .id-field input[type="email"], .id-field input[type="date"], .id-field select{
+    padding:8px 10px;
+    border:1px solid var(--borda);
+    border-radius:4px;
+    font-family:inherit;
+    font-size:.93rem;
+    background:#fff;
+  }
+  .id-field select{cursor:pointer;}
+  .req-mark{color:var(--vermelho); font-weight:700;}
+
+  /* Ícone de ajuda com dica ao passar o mouse */
+  .help-icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:1em;
+    height:1em;
+    border-radius:50%;
+    background:var(--cinza);
+    color:#fff;
+    font-size:.85rem;
+    font-weight:700;
+    line-height:1;
+    cursor:help;
+    margin-left:3px;
+    position:relative;
+    vertical-align:middle;
+    user-select:none;
+  }
+  .help-icon .tooltip-text{
+    visibility:hidden;
+    opacity:0;
+    position:absolute;
+    bottom:135%;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--cinza);
+    color:#fff;
+    text-align:left;
+    padding:6px 10px;
+    border-radius:4px;
+    font-size:.75rem;
+    font-weight:400;
+    white-space:normal;
+    width:max-content;
+    max-width:220px;
+    z-index:20;
+    transition:opacity .15s ease;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);
+    pointer-events:none;
+  }
+  .help-icon:hover .tooltip-text, .help-icon:focus .tooltip-text{
+    visibility:visible;
+    opacity:1;
+  }
+
+  /* Botões de ação */
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:24px 0;
+  }
+  .btn{
+    border:none;
+    border-radius:5px;
+    padding:11px 18px;
+    font-size:.92rem;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn-primary{background:var(--vermelho); color:#fff;}
+  .btn-secondary{background:var(--cinza); color:#fff;}
+  .btn-outline{background:#fff; border:1px solid var(--borda); color:var(--cinza);}
+  .btn:hover{filter:brightness(1.08);}
+
+  .terminou{
+    background:#f4f4f4;
+    border:1px solid var(--borda);
+    border-left:6px solid var(--cinza);
+    border-radius:4px;
+    padding:16px 18px;
+  }
+  .terminou h2{
+    margin:0 0 8px;
+    color:var(--cinza);
+    font-size:1.02rem;
+  }
+  .terminou p{margin:0 0 6px; font-size:.9rem;}
+
+  footer.rodape{
+    text-align:center;
+    color:var(--dica);
+    font-size:.78rem;
+    margin-top:20px;
+  }
+
+  @media (max-width:640px){
+    .id-grid{grid-template-columns:1fr;}
+    header.top{flex-direction:column; align-items:flex-start;}
+    .section-bar{flex-direction:column; align-items:flex-start; gap:4px;}
+    .actions{flex-direction:column;}
+    .btn{width:100%;}
+  }
+
+  /* Impressão */
+  @media print{
+    body{padding-top:0; background:#fff;}
+    #progress-bar-container, .actions, .btn-add-row, .btn-del-row, th.col-del, td.col-del, #pending-banner, .help-icon{
+      display:none !important;
+    }
+    .card{border:none; padding:0; margin-bottom:10px;}
+    .section-bar{
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+      break-inside:avoid;
+    }
+    table.dyn-table{
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
+    .bloco{break-inside:avoid;}
+    textarea{border:1px solid #999; min-height:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container">
+  <div id="progress-bar-fill"></div>
+  <div id="progress-bar-label">0% preenchido</div>
+</div>
+
+<div class="container">
+
+  <header class="top">
+    <img src="data:image/png;base64,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" alt="Grupo Gadens">
+    <div>
+      <h1>Formulário de Levantamento de Processo</h1>
+      <p>Conte como o seu trabalho é feito — a equipe de Processos transforma em POP.</p>
+    </div>
+  </header>
+
+  <div class="card instrucoes">
+    <h2>Antes de começar</h2>
+    <p style="font-size:.92rem; margin:0 0 8px;">Você conhece o seu trabalho melhor do que ninguém. Este formulário serve para você contar, com as suas palavras, como uma tarefa ou rotina é feita hoje. Com as respostas, a equipe de Processos escreve o POP (Procedimento Operacional Padrão) — o documento oficial com o passo a passo da atividade.</p>
+    <ul>
+      <li>Escreva como se estivesse explicando o trabalho a um colega novo no setor.</li>
+      <li>Não se preocupe com termos técnicos nem com "escrever bonito".</li>
+      <li>Se uma pergunta não se aplicar, escreva "não se aplica"; se não souber, escreva "não sei" e siga em frente.</li>
+      <li>Nas tabelas, a linha cinza em itálico é só um exemplo — ela não é salva, use-a como referência.</li>
+      <li>Suas respostas ficam salvas automaticamente neste computador enquanto você preenche. Ao terminar, baixe o arquivo e envie para a equipe de Processos.</li>
+      <li>Se quiser, anexe prints, planilhas ou fotos junto com este arquivo ao enviar por e-mail.</li>
+    </ul>
+  </div>
+
+  <div id="pending-banner" class="hidden"></div>
+
+  <div class="card">
+    <div class="section-bar">
+      <h3>Identificação</h3>
+      <span class="tag">dados de quem preenche</span>
+    </div>
+    <div class="id-grid">
+      <div class="id-field">
+        <label for="id_nome">Nome de quem preenche
+          <span class="help-icon" tabindex="0">?<span class="tooltip-text">Nome da pessoa que está preenchendo o formulário</span></span>
+          <span class="req-mark">*</span>
+        </label>
+        <input type="text" id="id_nome" placeholder="Ex.: Maria Souza">
+      </div>
+      <div class="id-field">
+        <label for="id_email">E-mail corporativo
+          <span class="help-icon" tabindex="0">?<span class="tooltip-text">E-mail que utiliza dentro das Empresas do Grupo Gadens</span></span>
+          <span class="req-mark">*</span>
+        </label>
+        <input type="email" id="id_email" placeholder="Ex.: nome@grupogadens.com.br">
+      </div>
+      <div class="id-field">
+        <label for="id_setor">Área Dona do Processo
+          <span class="help-icon" tabindex="0">?<span class="tooltip-text">Área principal e executora majoritária do processo</span></span>
+          <span class="req-mark">*</span>
+        </label>
+        <input type="text" id="id_setor" placeholder="Ex.: Contas a receber">
+      </div>
+      <div class="id-field">
+        <label for="id_empresa">Empresa do Grupo <span class="req-mark">*</span></label>
+        <select id="id_empresa">
+          <option value="" disabled selected>Selecione...</option>
+          <option value="ULTJ">ULTJ</option>
+          <option value="Gadens Incorporadora">Gadens Incorporadora</option>
+          <option value="Construtora Make It">Construtora Make It</option>
+          <option value="Autoshopping Linha Verde">Autoshopping Linha Verde</option>
+          <option value="Shopping Cidade">Shopping Cidade</option>
+          <option value="Triunfo do Brasil">Triunfo do Brasil</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label for="id_data">Data de preenchimento <span class="req-mark">*</span></label>
+        <input type="date" id="id_data">
+      </div>
+      <div class="id-field">
+        <label for="id_tarefa">Nome da tarefa ou rotina descrita
+          <span class="help-icon" tabindex="0">?<span class="tooltip-text">Título do documento</span></span>
+          <span class="req-mark">*</span>
+        </label>
+        <input type="text" id="id_tarefa" placeholder="Use o nome pelo qual ela é conhecida no dia a dia">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="questions-container"></div>
+
+  <div class="actions">
+    <button type="button" class="btn btn-primary" id="btn-download-txt">Baixar respostas (.txt)</button>
+    <button type="button" class="btn btn-secondary" id="btn-print">Salvar em PDF</button>
+    <button type="button" class="btn btn-outline" id="btn-clear">Limpar tudo</button>
+  </div>
+
+  <div class="card terminou">
+    <h2>Terminou?</h2>
+    <p>Releia rapidinho suas respostas, baixe o arquivo .txt (ou salve em PDF) e devolva este arquivo preenchido para a equipe de Processos.</p>
+    <p>Código do documento, fluxo no Bizagi, aprovações e controle de emissão são preenchidos pela equipe de Processos/Qualidade — você não precisa se preocupar com essa parte.</p>
+  </div>
+
+  <footer class="rodape">Grupo Gadens — Levantamento de Processo (base para POP)</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "gadens_levantamento_pop_v1";
+
+  var QUESTIONS = [
+    {id:"q1", num:1, title:"Para que serve esse trabalho? O que ele entrega ou garante quando é bem feito?",
+      dica:'Ex.: "Garantir que os boletos sejam emitidos sem erro e enviados aos clientes até o dia 25."',
+      label:"POP · Seção 1 — Objetivo", type:"text", required:true},
+    {id:"q2", num:2, title:"Quais setores participam desse trabalho ou usam o resultado dele?",
+      dica:"Quem envia informações para você e quem recebe o que você produz. Diga também em qual(is) empresa(s) do grupo isso acontece.",
+      label:"POP · Seção 2 — Aplicação", type:"text"},
+    {id:"q3", num:3, title:"Existe alguma lei, norma, manual, contrato ou orientação interna que você segue nesse trabalho?",
+      dica:'Cite o que lembrar, mesmo sem o nome exato; se não houver, escreva "não há".',
+      label:"POP · Seção 3 — Referências", type:"text"},
+    {id:"q4", num:4, title:"Quais siglas, apelidos ou termos técnicos são usados nesse trabalho?",
+      dica:"Siglas ou termos técnicos que necessitem de explicação, exemplo: NF / Nota Fiscal.",
+      label:"POP · Seção 4 — Definições", type:"table",
+      columns:["Sigla","O que significa"], example:["NF","Nota Fiscal"]},
+    {id:"q5", num:5, title:"Quais sistemas, programas ou ferramentas você usa?",
+      dica:"Um por linha, dizendo para que serve.",
+      label:"POP · Seção 5.1 — Sistemas", type:"table",
+      columns:["Sistema","Para que usa"], example:["Excel","Controlar os pedidos do mês"]},
+    {id:"q6", num:6, title:"O que precisa chegar até você para o trabalho começar ou andar?",
+      dica:"Formato: o que chega — de quem vem — com que frequência.",
+      label:"POP · Seção 5.2 — Documentos/entradas", type:"table",
+      columns:["O que chega","De quem vem","Com que frequência"],
+      example:["Planilha de pedidos","Vendas","Todo dia de manhã"]},
+    {id:"q7", num:7, title:"Sem quais funções ou pessoas esse trabalho não anda?",
+      dica:"Cite cargos ou funções; não precisa de nomes.",
+      label:"POP · Seção 5.3 — Papéis-chave", type:"text"},
+    {id:"q8", num:8, title:"O que dá a largada nesse trabalho?",
+      dica:"Ex.: uma data do mês, um e-mail que chega, um pedido do chefe, um cliente que liga.",
+      label:"POP · Seção 6 — Principais passos", type:"text"},
+    {id:"q9", num:9, title:"Descreva o passo a passo do início ao fim, na ordem em que acontece.",
+      dica:"Um passo por linha, começando com um verbo; diga quem faz e onde.",
+      label:"POP · Seção 6 — Principais passos", type:"table", required:true, numbered:true,
+      columns:["O que é feito","Quem faz","Em qual sistema/lugar","O que sai dessa etapa"],
+      example:["Conferir os pedidos do dia","Assistente de vendas","E-mail e planilha","Lista de pedidos conferida"]},
+    {id:"q10", num:10, title:"Como você sabe que o trabalho terminou? O que marca o fim?",
+      dica:'Ex.: "Quando todos os boletos aparecem como enviados no sistema."',
+      label:"POP · Seção 6 — Principais passos", type:"text", autoGrow:true},
+    {id:"q11", num:11, title:"Quem faz e quem decide o quê nesse trabalho?",
+      dica:"Para cada função: o que ela faz, o que decide sozinha e quando precisa de aprovação (de quem).",
+      label:"POP · Seção 7 — Papéis e autonomia", type:"table", cellType:"textarea",
+      columns:["Função","O que faz","O que decide sozinha / quando precisa de aprovação"],
+      example:["Analista financeiro","Emite boletos","Corrige até R$ 100; acima, aprovação do coordenador"]},
+    {id:"q12", num:12, title:"Existe algum número, meta ou prazo acompanhado? Como percebem se o trabalho vai bem ou mal?",
+      dica:"Ex.: quantidade por mês, % de erros, prazo máximo, reclamações. Se nada é medido hoje, diga isso.",
+      label:"POP · Seção 8 — Indicadores", type:"text"},
+    {id:"q13", num:13, title:"O que não pode dar errado de jeito nenhum? Onde um erro causa mais prejuízo ou retrabalho?",
+      dica:'Ex.: "Errar o CNPJ na nota obriga a cancelar e refazer tudo."',
+      label:"POP · Seção 9 — Pontos críticos", type:"text"},
+    {id:"q14", num:14, title:"O que costuma dar errado ou fugir do padrão? O que é feito quando acontece, e quem resolve?",
+      dica:"Um caso por linha: problema — o que é feito — quem resolve.",
+      label:"POP · Seção 10 — Desvios / ações", type:"table",
+      columns:["Problema","O que é feito","Quem resolve"],
+      example:["Sistema fora do ar","Registrar em planilha e lançar depois","Assistente + coordenador"]},
+    {id:"q15", num:15, title:"O que esse trabalho gera no final, e onde cada item fica guardado?",
+      dica:"Um item por linha: o que é gerado — onde fica.",
+      label:"POP · Seção 11 — Registro do processo", type:"table",
+      columns:["O que é gerado","Onde fica guardado"],
+      example:["Boleto emitido","TOTVS e pasta do cliente no OneDrive"]},
+    {id:"q16", num:16, title:"Tem mais alguma coisa que quem for escrever o POP precisa saber?",
+      dica:"Exceções raras, épocas de pico, o que já deu errado no passado, ideias de melhoria — tudo ajuda.",
+      label:null, type:"text"}
+  ];
+
+  var qById = {};
+  QUESTIONS.forEach(function(q){ qById[q.id] = q; });
+
+  var container = document.getElementById("questions-container");
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function autoGrowTextarea(el){
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }
+
+  // ---------- Construção estática dos blocos ----------
+  var htmlParts = [];
+  QUESTIONS.forEach(function(q){
+    htmlParts.push('<div class="bloco" data-block="' + q.id + '">');
+    htmlParts.push('<div class="section-bar"><h3>' + q.num + '. ' + escapeHtml(q.title) +
+      (q.required ? ' <span class="req-mark">*</span>' : '') + '</h3>' +
+      (q.label ? '<span class="tag">[' + escapeHtml(q.label) + ']</span>' : '<span class="tag">[apoio ao elaborador]</span>') +
+      '</div>');
+    htmlParts.push('<p class="dica">' + escapeHtml(q.dica) + '</p>');
+
+    if(q.type === "text"){
+      htmlParts.push('<textarea id="' + q.id + '" data-qid="' + q.id + '"' + (q.autoGrow ? ' class="autogrow"' : '') + '></textarea>');
+    } else {
+      htmlParts.push('<div class="table-wrap" id="wrap_' + q.id + '">');
+      htmlParts.push('<table class="dyn-table" data-qid="' + q.id + '">');
+      htmlParts.push('<thead><tr>');
+      if(q.numbered) htmlParts.push('<th class="col-num">Nº</th>');
+      q.columns.forEach(function(c){ htmlParts.push('<th>' + escapeHtml(c) + '</th>'); });
+      htmlParts.push('<th class="col-del"></th>');
+      htmlParts.push('</tr></thead>');
+      htmlParts.push('<tbody id="tbody_' + q.id + '">');
+      htmlParts.push('<tr class="example-row">');
+      if(q.numbered) htmlParts.push('<td class="col-num">Ex.</td>');
+      q.example.forEach(function(v){ htmlParts.push('<td><em>' + escapeHtml(v) + '</em></td>'); });
+      htmlParts.push('<td class="col-del"></td>');
+      htmlParts.push('</tr>');
+      htmlParts.push('</tbody>');
+      htmlParts.push('</table>');
+      htmlParts.push('</div>');
+      htmlParts.push('<button type="button" class="btn-add-row" data-qid="' + q.id + '">+ adicionar linha</button>');
+    }
+    htmlParts.push('</div>');
+  });
+  container.innerHTML = htmlParts.join("");
+
+  // ---------- Linhas de tabela ----------
+  function addRow(qid, values){
+    var q = qById[qid];
+    var tbody = document.getElementById("tbody_" + qid);
+    var tr = document.createElement("tr");
+    tr.className = "data-row";
+    if(q.numbered){
+      var tdNum = document.createElement("td");
+      tdNum.className = "col-num";
+      tr.appendChild(tdNum);
+    }
+    var growEls = [];
+    q.columns.forEach(function(col, i){
+      var td = document.createElement("td");
+      var field;
+      if(q.cellType === "textarea"){
+        field = document.createElement("textarea");
+        field.rows = 1;
+        field.className = "cell-textarea autogrow";
+        growEls.push(field);
+      } else {
+        field = document.createElement("input");
+        field.type = "text";
+      }
+      field.setAttribute("data-col", i);
+      field.setAttribute("aria-label", col);
+      field.value = (values && values[i]) ? values[i] : "";
+      td.appendChild(field);
+      tr.appendChild(td);
+    });
+    var tdDel = document.createElement("td");
+    tdDel.className = "col-del";
+    var btnDel = document.createElement("button");
+    btnDel.type = "button";
+    btnDel.className = "btn-del-row";
+    btnDel.title = "Remover linha";
+    btnDel.setAttribute("aria-label", "Remover linha");
+    btnDel.textContent = "×";
+    btnDel.setAttribute("data-qid", qid);
+    tdDel.appendChild(btnDel);
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+    growEls.forEach(function(el){ autoGrowTextarea(el); });
+    renumber(qid);
+  }
+
+  function renumber(qid){
+    var q = qById[qid];
+    if(!q.numbered) return;
+    var tbody = document.getElementById("tbody_" + qid);
+    var rows = tbody.querySelectorAll("tr.data-row");
+    rows.forEach(function(tr, idx){
+      var cell = tr.querySelector("td.col-num");
+      if(cell) cell.textContent = String(idx + 1);
+    });
+  }
+
+  container.addEventListener("click", function(e){
+    var addBtn = e.target.closest(".btn-add-row");
+    if(addBtn){
+      addRow(addBtn.getAttribute("data-qid"), null);
+      scheduleSave();
+      updateProgress();
+      return;
+    }
+    var delBtn = e.target.closest(".btn-del-row");
+    if(delBtn){
+      var qid = delBtn.getAttribute("data-qid");
+      var tr = delBtn.closest("tr");
+      var tbody = document.getElementById("tbody_" + qid);
+      var dataRows = tbody.querySelectorAll("tr.data-row");
+      if(dataRows.length > 1){
+        tr.parentNode.removeChild(tr);
+      } else {
+        // mantém ao menos uma linha, apenas limpa
+        tr.querySelectorAll('input[type="text"], textarea').forEach(function(inp){
+          inp.value = "";
+          if(inp.classList.contains("autogrow")) autoGrowTextarea(inp);
+        });
+      }
+      renumber(qid);
+      scheduleSave();
+      updateProgress();
+    }
+  });
+
+  container.addEventListener("input", function(e){
+    if(e.target.classList.contains("field-missing") && e.target.value.trim() !== ""){
+      e.target.classList.remove("field-missing");
+    }
+    if(e.target.classList.contains("autogrow")){
+      autoGrowTextarea(e.target);
+    }
+    scheduleSave();
+    updateProgress();
+  });
+
+  // ---------- Identificação: listeners ----------
+  var idFieldsIds = ["id_nome","id_email","id_setor","id_empresa","id_data","id_tarefa"];
+  idFieldsIds.forEach(function(id){
+    var handler = function(e){
+      if(e.target.classList.contains("field-missing") && e.target.value.trim() !== ""){
+        e.target.classList.remove("field-missing");
+      }
+      scheduleSave();
+      updateProgress();
+    };
+    document.getElementById(id).addEventListener("input", handler);
+    document.getElementById(id).addEventListener("change", handler);
+  });
+
+  // ---------- Progresso ----------
+  function isQuestionFilled(q){
+    if(q.type === "text"){
+      var ta = document.getElementById(q.id);
+      return ta && ta.value.trim() !== "";
+    }
+    var tbody = document.getElementById("tbody_" + q.id);
+    var rows = tbody.querySelectorAll("tr.data-row");
+    for(var i=0;i<rows.length;i++){
+      var inputs = rows[i].querySelectorAll('input[type="text"], textarea');
+      for(var j=0;j<inputs.length;j++){
+        if(inputs[j].value.trim() !== "") return true;
+      }
+    }
+    return false;
+  }
+
+  function isIdentificacaoFilled(){
+    return document.getElementById("id_nome").value.trim() !== "" &&
+           document.getElementById("id_email").value.trim() !== "" &&
+           document.getElementById("id_setor").value.trim() !== "" &&
+           document.getElementById("id_empresa").value.trim() !== "" &&
+           document.getElementById("id_data").value.trim() !== "" &&
+           document.getElementById("id_tarefa").value.trim() !== "";
+  }
+
+  function updateProgress(){
+    var total = QUESTIONS.length + 1;
+    var filled = 0;
+    if(isIdentificacaoFilled()) filled++;
+    QUESTIONS.forEach(function(q){ if(isQuestionFilled(q)) filled++; });
+    var pct = Math.round((filled/total)*100);
+    document.getElementById("progress-bar-fill").style.width = pct + "%";
+    document.getElementById("progress-bar-label").textContent = pct + "% preenchido";
+  }
+
+  // ---------- Autosave ----------
+  var saveTimer = null;
+  function scheduleSave(){
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 300);
+  }
+
+  function collectTableRows(qid){
+    var tbody = document.getElementById("tbody_" + qid);
+    var rows = tbody.querySelectorAll("tr.data-row");
+    var out = [];
+    rows.forEach(function(tr){
+      var inputs = tr.querySelectorAll('input[type="text"], textarea');
+      var vals = [];
+      inputs.forEach(function(inp){ vals.push(inp.value); });
+      out.push(vals);
+    });
+    return out;
+  }
+
+  function saveState(){
+    var state = {
+      identificacao: {
+        nome: document.getElementById("id_nome").value,
+        email: document.getElementById("id_email").value,
+        setor: document.getElementById("id_setor").value,
+        empresa: document.getElementById("id_empresa").value,
+        data: document.getElementById("id_data").value,
+        tarefa: document.getElementById("id_tarefa").value
+      },
+      respostas: {}
+    };
+    QUESTIONS.forEach(function(q){
+      if(q.type === "text"){
+        state.respostas[q.id] = document.getElementById(q.id).value;
+      } else {
+        state.respostas[q.id] = collectTableRows(q.id);
+      }
+    });
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(err){ /* localStorage indisponível: segue sem autosave */ }
+  }
+
+  function todayISO(){
+    var d = new Date();
+    var m = String(d.getMonth()+1).padStart(2,"0");
+    var day = String(d.getDate()).padStart(2,"0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+
+  function loadState(){
+    var raw = null;
+    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(err){}
+    var state = null;
+    if(raw){
+      try{ state = JSON.parse(raw); }catch(err){ state = null; }
+    }
+
+    if(state && state.identificacao){
+      document.getElementById("id_nome").value = state.identificacao.nome || "";
+      document.getElementById("id_email").value = state.identificacao.email || "";
+      document.getElementById("id_setor").value = state.identificacao.setor || "";
+      document.getElementById("id_empresa").value = state.identificacao.empresa || "";
+      document.getElementById("id_data").value = state.identificacao.data || todayISO();
+      document.getElementById("id_tarefa").value = state.identificacao.tarefa || "";
+    } else {
+      document.getElementById("id_data").value = todayISO();
+    }
+
+    QUESTIONS.forEach(function(q){
+      var saved = state && state.respostas ? state.respostas[q.id] : null;
+      if(q.type === "text"){
+        var ta = document.getElementById(q.id);
+        ta.value = saved || "";
+        if(q.autoGrow) autoGrowTextarea(ta);
+      } else {
+        if(saved && saved.length){
+          saved.forEach(function(rowVals){ addRow(q.id, rowVals); });
+        } else {
+          addRow(q.id, null);
+        }
+      }
+    });
+  }
+
+  // ---------- Validação de obrigatórias ----------
+  function getMissingRequired(){
+    var missing = [];
+    if(document.getElementById("id_nome").value.trim() === "") missing.push({label:"Nome de quem preenche", el: document.getElementById("id_nome")});
+    if(document.getElementById("id_email").value.trim() === "") missing.push({label:"E-mail corporativo", el: document.getElementById("id_email")});
+    if(document.getElementById("id_setor").value.trim() === "") missing.push({label:"Área Dona do Processo", el: document.getElementById("id_setor")});
+    if(document.getElementById("id_empresa").value.trim() === "") missing.push({label:"Empresa do Grupo", el: document.getElementById("id_empresa")});
+    if(document.getElementById("id_data").value.trim() === "") missing.push({label:"Data de preenchimento", el: document.getElementById("id_data")});
+    if(document.getElementById("id_tarefa").value.trim() === "") missing.push({label:"Nome da tarefa ou rotina", el: document.getElementById("id_tarefa")});
+
+    var q1 = document.getElementById("q1");
+    if(q1.value.trim() === "") missing.push({label:"Pergunta 1 — Objetivo do trabalho", el: q1});
+
+    if(!isQuestionFilled(qById["q9"])) missing.push({label:"Pergunta 9 — Passo a passo (pelo menos 1 linha preenchida)", el: document.getElementById("wrap_q9")});
+
+    return missing;
+  }
+
+  function highlightMissing(missing){
+    document.querySelectorAll(".field-missing").forEach(function(el){ el.classList.remove("field-missing"); });
+    var banner = document.getElementById("pending-banner");
+    if(missing.length === 0){
+      banner.classList.add("hidden");
+      banner.innerHTML = "";
+      return;
+    }
+    missing.forEach(function(m){ if(m.el) m.el.classList.add("field-missing"); });
+    var items = missing.map(function(m){ return "<li>" + escapeHtml(m.label) + "</li>"; }).join("");
+    banner.innerHTML = "<strong>Ainda faltam " + missing.length + " campo(s) obrigatório(s):</strong><ul>" + items + "</ul>";
+    banner.classList.remove("hidden");
+    banner.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  // ---------- Exportação .txt ----------
+  function sanitizeFileName(s){
+    return String(s).replace(/[\\\/:*?"<>|]/g, "-").trim() || "Sem nome da tarefa";
+  }
+
+  function buildExportText(){
+    var lines = [];
+    lines.push("LEVANTAMENTO DE PROCESSO — BASE PARA POP");
+    lines.push("Grupo Gadens");
+    lines.push("========================================");
+    lines.push("");
+    lines.push("IDENTIFICAÇÃO");
+    lines.push("Nome de quem preenche: " + (document.getElementById("id_nome").value || "-"));
+    lines.push("E-mail corporativo: " + (document.getElementById("id_email").value || "-"));
+    lines.push("Área Dona do Processo: " + (document.getElementById("id_setor").value || "-"));
+    lines.push("Empresa do Grupo: " + (document.getElementById("id_empresa").value || "-"));
+    lines.push("Data de preenchimento: " + (document.getElementById("id_data").value || "-"));
+    lines.push("Nome da tarefa ou rotina descrita: " + (document.getElementById("id_tarefa").value || "-"));
+    lines.push("");
+
+    QUESTIONS.forEach(function(q){
+      lines.push("----------------------------------------");
+      lines.push("[" + (q.label || "apoio ao elaborador") + "]");
+      lines.push(q.num + ". " + q.title);
+      lines.push("");
+      if(q.type === "text"){
+        var val = document.getElementById(q.id).value.trim();
+        lines.push(val !== "" ? val : "(não respondido)");
+      } else {
+        var rows = collectTableRows(q.id).filter(function(r){
+          return r.some(function(v){ return v.trim() !== ""; });
+        });
+        if(rows.length === 0){
+          lines.push("(nenhuma linha preenchida)");
+        } else {
+          rows.forEach(function(r, idx){
+            var parts = q.columns.map(function(col, i){ return col + ": " + (r[i] && r[i].trim() !== "" ? r[i].trim() : "-"); });
+            var prefix = q.numbered ? ("Passo " + (idx+1) + " — ") : "- ";
+            lines.push(prefix + parts.join(" | "));
+          });
+        }
+      }
+      lines.push("");
+    });
+
+    return lines.join("\n");
+  }
+
+  document.getElementById("btn-download-txt").addEventListener("click", function(){
+    var missing = getMissingRequired();
+    highlightMissing(missing);
+    var text = buildExportText();
+    var tarefa = sanitizeFileName(document.getElementById("id_tarefa").value);
+    var data = document.getElementById("id_data").value || todayISO();
+    var filename = "Levantamento - " + tarefa + " - " + data + ".txt";
+    var blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  document.getElementById("btn-print").addEventListener("click", function(){
+    var missing = getMissingRequired();
+    highlightMissing(missing);
+    window.print();
+  });
+
+  document.getElementById("btn-clear").addEventListener("click", function(){
+    if(confirm("Tem certeza que deseja limpar todas as respostas? Essa ação não pode ser desfeita.")){
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(err){}
+      location.reload();
+    }
+  });
+
+  // ---------- Início ----------
+  loadState();
+  updateProgress();
+})();
+</script>
+</body>
+</html>
