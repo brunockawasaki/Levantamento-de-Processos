@@ -1,0 +1,685 @@
+<title>Painel de Organização de Documentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F2F2;
+  --surface:#FFFFFF;
+  --surface-soft:#F7F5F5;
+  --border:#B7B7B7;
+  --border-soft:#D8D6D6;
+  --ink:#2B2B2B;
+  --ink-soft:#58595B;
+  --muted:#767171;
+  --accent:#C0272D;
+  --accent-strong:#A81A1E;
+  --accent-soft:#F6E4E4;
+  --ok:#3F7A52;
+  --ok-soft:#E6F0E8;
+  --warn:#A97317;
+  --warn-soft:#F6ECD9;
+  --crit:#A81A1E;
+  --crit-soft:#F6E1E0;
+  --shadow: 0 1px 2px rgba(43,43,43,0.06), 0 8px 24px -12px rgba(43,43,43,0.18);
+  --font-display:'Archivo', 'Segoe UI', sans-serif;
+  --font-body:'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono:'IBM Plex Mono', 'Consolas', monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17181A;
+    --surface:#1F2123;
+    --surface-soft:#26282A;
+    --border:#3B3D3F;
+    --border-soft:#2C2E30;
+    --ink:#ECEAE9;
+    --ink-soft:#B9B7B6;
+    --muted:#8D8B8A;
+    --accent:#E2434A;
+    --accent-strong:#F0575D;
+    --accent-soft:#341A1B;
+    --ok:#5FB37D;
+    --ok-soft:#16241B;
+    --warn:#D9A441;
+    --warn-soft:#2B2313;
+    --crit:#E2434A;
+    --crit-soft:#301718;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17181A;
+  --surface:#1F2123;
+  --surface-soft:#26282A;
+  --border:#3B3D3F;
+  --border-soft:#2C2E30;
+  --ink:#ECEAE9;
+  --ink-soft:#B9B7B6;
+  --muted:#8D8B8A;
+  --accent:#E2434A;
+  --accent-strong:#F0575D;
+  --accent-soft:#341A1B;
+  --ok:#5FB37D;
+  --ok-soft:#16241B;
+  --warn:#D9A441;
+  --warn-soft:#2B2313;
+  --crit:#E2434A;
+  --crit-soft:#301718;
+  --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px -16px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:40px 28px 80px;
+}
+
+.eyebrow{
+  font-family:var(--font-display);
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 10px;
+}
+h1{
+  font-family:var(--font-display);
+  font-size:clamp(28px,4vw,38px);
+  font-weight:800;
+  letter-spacing:-0.01em;
+  line-height:1.08;
+  margin:0 0 10px;
+  text-wrap:balance;
+  color:var(--ink);
+}
+.sub{
+  font-size:15px;
+  color:var(--ink-soft);
+  margin:0 0 4px;
+  max-width:640px;
+  line-height:1.55;
+}
+.meta-line{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px 18px;
+  margin-top:18px;
+  padding-top:18px;
+  border-top:1px solid var(--border-soft);
+}
+.meta-item{
+  font-size:12.5px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.meta-item b{color:var(--ink-soft);font-weight:600;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none;}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:32px;
+}
+.kpi{
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:10px;
+  padding:18px 20px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.kpi::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--accent);
+}
+.kpi.kpi-warn::before{background:var(--warn);}
+.kpi-label{
+  font-family:var(--font-display);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+.kpi-value{
+  font-family:var(--font-mono);
+  font-size:34px;
+  font-weight:500;
+  color:var(--ink);
+  line-height:1;
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+}
+.kpi-value small{
+  font-size:14px;
+  color:var(--muted);
+  font-family:var(--font-body);
+  font-weight:500;
+}
+.kpi-foot{
+  margin-top:8px;
+  font-size:12.5px;
+  color:var(--muted);
+}
+.kpi-foot a{color:var(--accent);cursor:pointer;text-decoration:none;border-bottom:1px dashed var(--accent);}
+.kpi-foot a:hover{color:var(--accent-strong);}
+
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  padding:22px 24px 24px;
+}
+.panel-title{
+  font-family:var(--font-display);
+  font-size:14.5px;
+  font-weight:700;
+  color:var(--ink);
+  margin:0 0 2px;
+}
+.panel-sub{
+  font-size:12.5px;
+  color:var(--muted);
+  margin:0 0 18px;
+}
+
+.charts-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:14px;
+}
+@media (max-width:760px){
+  .charts-row, .kpis{grid-template-columns:1fr;}
+}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.legend{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.legend-item{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);}
+.legend-swatch{width:10px;height:10px;border-radius:3px;flex:none;}
+.legend-item b{color:var(--ink);font-family:var(--font-mono);font-weight:500;margin-left:auto;padding-left:14px;}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.bar-row:last-child{margin-bottom:0;}
+.bar-label{width:82px;flex:none;font-size:12.5px;color:var(--ink-soft);text-align:right;}
+.bar-track{flex:1;background:var(--surface-soft);border-radius:5px;height:20px;position:relative;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;background:var(--accent);}
+.bar-value{width:30px;flex:none;font-family:var(--font-mono);font-size:12.5px;color:var(--ink);text-align:right;}
+
+.setor-chart{margin-top:16px;}
+.setor-row{display:grid;grid-template-columns:190px 1fr 34px;align-items:center;gap:10px;padding:5px 0;}
+.setor-name{font-size:12.5px;color:var(--ink-soft);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.setor-track{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--surface-soft);}
+.setor-seg{height:100%;}
+.setor-total{font-family:var(--font-mono);font-size:12px;color:var(--muted);text-align:right;}
+.setor-legend{display:flex;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border-soft);flex-wrap:wrap;}
+
+.table-panel{margin-top:14px;}
+.table-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  margin-bottom:16px;
+}
+.search-input{
+  flex:1;
+  min-width:180px;
+  font-family:var(--font-body);
+  font-size:13.5px;
+  padding:9px 12px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  background:var(--bg);
+  color:var(--ink);
+}
+.search-input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.select-input{
+  font-family:var(--font-body);
+  font-size:13px;
+  padding:8px 10px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  background:var(--bg);
+  color:var(--ink-soft);
+}
+.chip-group{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{
+  font-family:var(--font-body);
+  font-size:12.5px;
+  font-weight:500;
+  padding:7px 12px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:var(--ink-soft);
+  cursor:pointer;
+  user-select:none;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.result-count{font-size:12px;color:var(--muted);margin-left:auto;white-space:nowrap;}
+
+.table-scroll{overflow-x:auto;border:1px solid var(--border-soft);border-radius:8px;}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:920px;}
+thead th{
+  position:sticky;top:0;
+  background:var(--surface-soft);
+  text-align:left;
+  font-family:var(--font-display);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:10px 12px;
+  border-bottom:1px solid var(--border-soft);
+  cursor:pointer;
+  white-space:nowrap;
+}
+thead th:hover{color:var(--accent);}
+thead th.sorted{color:var(--accent);}
+thead th .arrow{margin-left:3px;font-size:9px;opacity:.7;}
+tbody td{
+  padding:9px 12px;
+  border-bottom:1px solid var(--border-soft);
+  color:var(--ink);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface-soft);}
+.td-codigo{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+.td-titulo{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tipo-tag{
+  font-family:var(--font-display);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.03em;
+  padding:3px 7px;
+  border-radius:5px;
+  background:var(--surface-soft);
+  color:var(--ink-soft);
+  border:1px solid var(--border-soft);
+  white-space:nowrap;
+}
+.amb-cell{text-align:center;}
+.amb-yes{color:var(--ok);font-weight:600;}
+.amb-no{color:var(--border);}
+.status-pill{
+  font-family:var(--font-display);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:0.03em;
+  padding:4px 10px;
+  border-radius:20px;
+  white-space:nowrap;
+  display:inline-block;
+}
+.status-Completo{background:var(--ok-soft);color:var(--ok);}
+.status-Parcial{background:var(--warn-soft);color:var(--warn);}
+.status-Ausente{background:var(--crit-soft);color:var(--crit);}
+.td-data{color:var(--muted);font-size:12.5px;white-space:nowrap;}
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+
+footer{
+  margin-top:28px;
+  font-size:11.5px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.grid-main{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px;}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow">Grupo Gadens · Governança de Processos</div>
+  <h1>Painel de Organização de Documentos</h1>
+  <p class="sub">Situação consolidada dos documentos oficiais (POPs, ITs, Regimentos e Fluxogramas) nos três repositórios em que precisam existir sincronizados.</p>
+  <div class="meta-line">
+    <span class="meta-item"><span class="dot"></span><b>Ambiente 1</b>&nbsp;Central de Documentos</span>
+    <span class="meta-item"><span class="dot" style="background:var(--ink-soft)"></span><b>Ambiente 2</b>&nbsp;Repositório por Setor</span>
+    <span class="meta-item"><span class="dot" style="background:var(--muted)"></span><b>Ambiente 3</b>&nbsp;Projeto Next</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi">
+      <p class="kpi-label">Total de documentos</p>
+      <div class="kpi-value" id="kpi-total">—</div>
+      <p class="kpi-foot">Mapeados nos 3 ambientes</p>
+    </div>
+    <div class="kpi">
+      <p class="kpi-label">Sincronizado (3 ambientes)</p>
+      <div class="kpi-value" id="kpi-pct">—<small>%</small></div>
+      <p class="kpi-foot" id="kpi-pct-foot">—</p>
+    </div>
+    <div class="kpi kpi-warn">
+      <p class="kpi-label">Pendências</p>
+      <div class="kpi-value" id="kpi-pend">—</div>
+      <p class="kpi-foot"><a onclick="filterStatusPending()">ver na tabela ↓</a></p>
+    </div>
+  </div>
+
+  <div class="grid-main">
+    <div class="charts-row">
+      <div class="panel">
+        <p class="panel-title">Status de Sincronização</p>
+        <p class="panel-sub">Presença simultânea nos 3 ambientes, por documento</p>
+        <div class="donut-wrap">
+          <svg id="donut" width="150" height="150" viewBox="0 0 150 150"></svg>
+          <div class="legend" id="donut-legend"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="panel-title">Documentos por Tipo</p>
+        <p class="panel-sub">Quantidade total, somando os 27 setores</p>
+        <div id="tipo-bars"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title">Documentos por Setor <span style="color:var(--muted);font-weight:500;">— composição por tipo</span></p>
+      <p class="panel-sub">Cada barra é um setor, dividida por POP / IT / Regimento / Fluxograma</p>
+      <div class="setor-chart" id="setor-chart"></div>
+      <div class="setor-legend" id="setor-legend"></div>
+    </div>
+
+    <div class="panel table-panel">
+      <p class="panel-title">Painel — todos os documentos</p>
+      <p class="panel-sub">Busque, filtre por tipo e ordene clicando no cabeçalho da coluna</p>
+      <div class="table-controls">
+        <input class="search-input" id="search" type="text" placeholder="Buscar por código, título ou setor…">
+        <select class="select-input" id="setor-filter"><option value="">Todos os setores</option></select>
+        <div class="chip-group" id="tipo-chips"></div>
+        <span class="result-count" id="result-count"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th data-key="setor">Setor</th>
+              <th data-key="codigo">Código</th>
+              <th data-key="titulo">Título</th>
+              <th data-key="tipo">Tipo</th>
+              <th data-key="amb1" style="text-align:center">Amb.1</th>
+              <th data-key="amb2" style="text-align:center">Amb.2</th>
+              <th data-key="amb3" style="text-align:center">Amb.3</th>
+              <th data-key="status">Status</th>
+              <th data-key="data">Atualizado em</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>Gerado a partir do Painel de Organização de Documentos · Grupo Gadens</footer>
+</div>
+
+<script>
+const DATA = {"rows": [{"codigo": "FL.GG.NNG.001", "titulo": "Prospecção NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.002", "titulo": "Negociação NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.003", "titulo": "Due Diligence Make It NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.004", "titulo": "Due Jurídica NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.005", "titulo": "Due Diligence Gadens NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.006", "titulo": "Pós-Aquisição NN", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/07/2026", "status": "Completo"}, {"codigo": "FL.GG.NNG.007", "titulo": "Fluxo de Abertura de SPEs", "tipo": "Fluxograma", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "17/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.001", "titulo": "Definição das Diretrizes de Prospecção", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.002", "titulo": "Análise de Aderência Estratégica da Oportunidade", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.003", "titulo": "Elaboração do Estudo de Massa para Viabilidade V0", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.004", "titulo": "Estudo Preliminar de Viabilidade Econômica V0", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.005", "titulo": "Viabilidade Financeira V0 para Gadens e Make It", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.006", "titulo": "Realização da Aquisição do Terreno", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.NNG.007", "titulo": "Pós Aquisição de Terrenos", "tipo": "POP", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "RE.GG.NNG.001", "titulo": "Comitês de Novos Negócios -  Grupo Gadens", "tipo": "Regimento", "setor": "1. Novos Negócios", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "PO.GG.PLA.001", "titulo": "Pré-Planejamento de Obras", "tipo": "POP", "setor": "10. Planejamento e Controle", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "24/07/2026", "status": "Completo"}, {"codigo": "PO.GG.PLA.002", "titulo": "Planejamento Executivo de Obras", "tipo": "POP", "setor": "10. Planejamento e Controle", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "24/07/2026", "status": "Completo"}, {"codigo": "PO.GG.PLA.003", "titulo": "Critérios Aprovações e Validação de Quantitativos", "tipo": "POP", "setor": "10. Planejamento e Controle", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "24/07/2026", "status": "Completo"}, {"codigo": "PO.GG.PLA.004", "titulo": "Critérios Validação e Envio da PLS", "tipo": "POP", "setor": "10. Planejamento e Controle", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "24/07/2026", "status": "Completo"}, {"codigo": "PO.GG.PLA.005", "titulo": "Acompanhamento de Obra", "tipo": "POP", "setor": "10. Planejamento e Controle", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "24/07/2026", "status": "Completo"}, {"codigo": "IT.CM.QLD.001", "titulo": "Fundações", "tipo": "IT", "setor": "11. Qualidade", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "12/08/2026", "status": "Completo"}, {"codigo": "PO.GG.CON.001", "titulo": "Due Diligence Contábil", "tipo": "POP", "setor": "18. Contabilidade", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.FIS.001", "titulo": "Carta de Correção Eletrônica (CC-e)", "tipo": "POP", "setor": "19. Fiscal", "amb1": "Sim", "amb2": "Sim", "amb3": "Não", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/08/2026", "status": "Parcial"}, {"codigo": "FL.GG.INC.00", "titulo": "(EP) Estudos Preliminares", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.01", "titulo": "(AP) AnteProjeto", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.02", "titulo": "(PE) Pré-Executivo", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.03", "titulo": "(EX) Projeto Executivo", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.04", "titulo": "Inicio de Obra", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.05", "titulo": "Controle de Obra", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.06", "titulo": "Finalização de Obra", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.07", "titulo": "Orcamento e Planejamento", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.08", "titulo": "Viabilidade Economico Financeira", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.09", "titulo": "Acompanhamento de Orçamento de Controladoria", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.10", "titulo": "Projetos Legais Pré-alvará", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.11", "titulo": "Orçamento Pré-Exec Gadens", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.12", "titulo": "Pré-planejamento", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.13", "titulo": "Planejamento Executivo", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "FL.GG.INC.14", "titulo": "Orçamento Exec Make It", "tipo": "Fluxograma", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "30/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.002", "titulo": "Abertura e Governança da Due Diligence – Make It", "tipo": "POP", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.003", "titulo": "Due Diligence Técnica Integrada – Make It", "tipo": "POP", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.004", "titulo": "Consolidação da Due Diligence – Make It", "tipo": "POP", "setor": "2. Incorporação Make It", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.JUR.001", "titulo": "Due Diligence Jurídica", "tipo": "POP", "setor": "26. Jurídico", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.JUR.002", "titulo": "Pré-Due Diligence Jurídica", "tipo": "POP", "setor": "26. Jurídico", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.JUR.003", "titulo": "Elaboração, Revisão e Negociação da Minuta Contratual", "tipo": "POP", "setor": "26. Jurídico", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.JUR.004", "titulo": "Formalização Contratual e Transição para Due Diligence", "tipo": "POP", "setor": "26. Jurídico", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "FL.GG.FIN.001", "titulo": "Conciliação de Contas a Pagar", "tipo": "Fluxograma", "setor": "27. Financeiro", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "27/07/2026", "status": "Completo"}, {"codigo": "FL.GG.FIN.002", "titulo": "Processo de Pagamento", "tipo": "Fluxograma", "setor": "27. Financeiro", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "27/07/2026", "status": "Completo"}, {"codigo": "FL.GG.FIN.003", "titulo": "Adiantamento de Pagamento", "tipo": "Fluxograma", "setor": "27. Financeiro", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "13/07/2026", "status": "Completo"}, {"codigo": "FL.GG.FIN.004", "titulo": "Solicitação de Pagamento de Títulos", "tipo": "Fluxograma", "setor": "27. Financeiro", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "27/07/2026", "status": "Completo"}, {"codigo": "FL.GG.FIN.005", "titulo": "Recebimento Fiscal", "tipo": "Fluxograma", "setor": "27. Financeiro", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "27/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.001", "titulo": "Pré-Due Diligence – Gadens e Make It", "tipo": "POP", "setor": "3. Incorporação Gadens", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.005", "titulo": "Abertura e Governança da Due Diligence – Gadens", "tipo": "POP", "setor": "3. Incorporação Gadens", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.006", "titulo": "Due Diligence Técnica Integrada – Gadens", "tipo": "POP", "setor": "3. Incorporação Gadens", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.INC.007", "titulo": "Consolidação da Due Diligence e Decisão – Gadens", "tipo": "POP", "setor": "3. Incorporação Gadens", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.001", "titulo": "Cadastro de Materiais e Serviços", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.002", "titulo": "Homologação de material fornecedores", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.003", "titulo": "Avaliação de Fornecedores", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.004", "titulo": "Compras", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.005", "titulo": "Follow up de Pedidos de Compra", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.006", "titulo": "Recebimento Físico", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "FL.GG.SUP.007", "titulo": "Controle de Estoque", "tipo": "Fluxograma", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "04/09/2026", "status": "Completo"}, {"codigo": "IT.GG.SUP.001", "titulo": "Abertura de Solicitações de Compra no Mega", "tipo": "IT", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.001", "titulo": "Abertura de Solicitações de Compra no ERP Mega", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.002", "titulo": "Análise de Cotações e Propostas", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.003", "titulo": "Follow Up de Pedidos de Compra", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.006", "titulo": "Transferência de Materiais entre Obras", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.007", "titulo": "Controle de Estoque", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.008", "titulo": "Agendamento de Entrega de Materiais", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.009", "titulo": "Retirada de Material do Almoxarifado", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.010", "titulo": "Solicitação de Cadastro de Item", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.011", "titulo": "Retirada de Ferramentas do Almoxarifado", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.012", "titulo": "Conferencia de Recebimento Físico", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.013", "titulo": "Aviso de Recebimento de Notas Fiscais", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "PO.GG.SUP.014", "titulo": "Manutenção de Cadastro de Item", "tipo": "POP", "setor": "4. Suprimentos", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "03/09/2026", "status": "Completo"}, {"codigo": "FL.GG.GMO.001", "titulo": "Contratação de Prestação de Serviços e Locação com Mão de Obra", "tipo": "Fluxograma", "setor": "5. GMO", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/06/2026", "status": "Completo"}, {"codigo": "FL.GG.GMO.002", "titulo": "Gestão de Contratos (Aditivos e Distratos)", "tipo": "Fluxograma", "setor": "5. GMO", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/06/2026", "status": "Completo"}, {"codigo": "FL.GG.GMO.003", "titulo": "Gestão de Contratos (Conferência da Medição e Documentação a Autorização de Pagamento", "tipo": "Fluxograma", "setor": "5. GMO", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/06/2026", "status": "Completo"}, {"codigo": "PO.GG.GMO.001", "titulo": "Medições - GMO", "tipo": "POP", "setor": "5. GMO", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/08/2026", "status": "Completo"}, {"codigo": "FL.GG.CDT.01", "titulo": "Crédito Imobiliário 1", "tipo": "Fluxograma", "setor": "6. Crédito Imobiliário", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/06/2026", "status": "Completo"}, {"codigo": "FL.GG.CDT.02", "titulo": "Crédito Imobiliário 2", "tipo": "Fluxograma", "setor": "6. Crédito Imobiliário", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "26/06/2026", "status": "Completo"}, {"codigo": "RE.CM.PJC.001", "titulo": "Regimento dos Comitês de Due Diligence - Make It", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "11/08/2026", "status": "Completo"}, {"codigo": "RE.CM.PJC.002", "titulo": "Regimento dos Comitês de Estudo Preliminar - Make It", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "11/08/2026", "status": "Completo"}, {"codigo": "RE.CM.PJC.003", "titulo": "Regimento dos Comitês de Anteprojeto - Make It", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "11/08/2026", "status": "Completo"}, {"codigo": "RE.CM.PJC.004", "titulo": "Regimento dos Comitês de Pré-executivo - Make It", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "11/08/2026", "status": "Completo"}, {"codigo": "RE.CM.PJC.005", "titulo": "Regimento dos Comitês de Executivo - Make It", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "11/08/2026", "status": "Completo"}, {"codigo": "RE.GG.PJC.006", "titulo": "Regimento do Comite Extraordinario de Revisao de Projeto (CERP)", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "12/08/2026", "status": "Completo"}, {"codigo": "RE.IG.PJC.001", "titulo": "Regimento dos Comitês de Due Diligence", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "19/08/2026", "status": "Completo"}, {"codigo": "RE.IG.PJC.002", "titulo": "Regimento dos Comitês de Estudo Preliminar", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "19/08/2026", "status": "Completo"}, {"codigo": "RE.IG.PJC.003", "titulo": "Regimento dos Comitês de Anteprojeto", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "19/08/2026", "status": "Completo"}, {"codigo": "RE.IG.PJC.004", "titulo": "Regimento dos Comitês de Pré-executivo", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "19/08/2026", "status": "Completo"}, {"codigo": "RE.IG.PJC.005", "titulo": "Regimento dos Comitês de Executivo", "tipo": "Regimento", "setor": "8. Projetos Complementares", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "19/08/2026", "status": "Completo"}, {"codigo": "PO.GG.ORC.001", "titulo": "Elaboração do Orçamento Paramétrico para Viabilidade V0", "tipo": "POP", "setor": "9. Orçamento", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.ORC.002", "titulo": "Estimativa de Due – Gadens", "tipo": "POP", "setor": "9. Orçamento", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "23/07/2026", "status": "Completo"}, {"codigo": "PO.GG.ORC.003", "titulo": "Definição de Critérios para Atualização de Valores Unitários do Orçamento", "tipo": "POP", "setor": "9. Orçamento", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/08/2026", "status": "Completo"}, {"codigo": "PO.GG.ORC.004", "titulo": "Orçamento EP", "tipo": "POP", "setor": "9. Orçamento", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/08/2026", "status": "Completo"}, {"codigo": "PO.GG.ORC.005", "titulo": "Orçamento Pré-Executivo e Executivo", "tipo": "POP", "setor": "9. Orçamento", "amb1": "Sim", "amb2": "Sim", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "21/08/2026", "status": "Completo"}, {"codigo": "FL.GG.PRO.01", "titulo": "Macroprocesso Grupo Gadens Incorporadoras", "tipo": "Fluxograma", "setor": "PRO", "amb1": "Não", "amb2": "Não", "amb3": "Sim", "versao": "v00", "resumo": "Publicação inicial (sem histórico de versão anterior a esta planilha)", "data": "25/08/2026", "status": "Parcial"}], "setores_order": ["1. Novos Negócios", "2. Incorporação Make It", "3. Incorporação Gadens", "4. Suprimentos", "5. GMO", "6. Crédito Imobiliário", "8. Projetos Complementares", "9. Orçamento", "10. Planejamento e Controle", "11. Qualidade", "18. Contabilidade", "19. Fiscal", "26. Jurídico", "27. Financeiro", "PRO"], "tipos_order": ["POP", "IT", "Regimento", "Fluxograma"], "setor_tipo": {"1. Novos Negócios": {"Fluxograma": 7, "POP": 7, "Regimento": 1}, "2. Incorporação Make It": {"Fluxograma": 15, "POP": 3}, "3. Incorporação Gadens": {"POP": 4}, "4. Suprimentos": {"Fluxograma": 7, "IT": 1, "POP": 12}, "5. GMO": {"Fluxograma": 3, "POP": 1}, "6. Crédito Imobiliário": {"Fluxograma": 2}, "8. Projetos Complementares": {"Regimento": 11}, "9. Orçamento": {"POP": 5}, "10. Planejamento e Controle": {"POP": 5}, "11. Qualidade": {"IT": 1}, "18. Contabilidade": {"POP": 1}, "19. Fiscal": {"POP": 1}, "26. Jurídico": {"POP": 4}, "27. Financeiro": {"Fluxograma": 5}, "PRO": {"Fluxograma": 1}}, "tipo_count": {"Fluxograma": 40, "POP": 43, "Regimento": 12, "IT": 2}, "status_count": {"Completo": 95, "Parcial": 2}, "total": 97};
+
+const TIPO_COLORS = {
+  "POP": "var(--accent)",
+  "Fluxograma": "var(--ink-soft)",
+  "Regimento": "var(--accent-strong)",
+  "IT": "var(--border)"
+};
+const TIPO_COLORS_HEX = {
+  "POP": "#C0272D",
+  "Fluxograma": "#58595B",
+  "Regimento": "#A81A1E",
+  "IT": "#B7B7B7"
+};
+
+function el(tag, attrs, children){
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k === "class") e.className = attrs[k];
+    else if(k === "html") e.innerHTML = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  if(children) children.forEach(c => e.appendChild(c));
+  return e;
+}
+
+function renderKPIs(){
+  const total = DATA.total;
+  const completo = DATA.status_count["Completo"] || 0;
+  const parcial = DATA.status_count["Parcial"] || 0;
+  const ausente = DATA.status_count["Ausente"] || 0;
+  const pend = parcial + ausente;
+  const pct = total ? Math.round((completo/total)*100) : 0;
+
+  document.getElementById("kpi-total").textContent = total;
+  document.getElementById("kpi-pct").innerHTML = pct + "<small>%</small>";
+  document.getElementById("kpi-pct-foot").textContent = completo + " de " + total + " documentos completos";
+  document.getElementById("kpi-pend").textContent = pend;
+}
+
+function renderDonut(){
+  const svg = document.getElementById("donut");
+  const legend = document.getElementById("donut-legend");
+  const segs = [
+    {key:"Completo", color:"var(--ok)", n: DATA.status_count["Completo"]||0},
+    {key:"Parcial", color:"var(--warn)", n: DATA.status_count["Parcial"]||0},
+    {key:"Ausente", color:"var(--crit)", n: DATA.status_count["Ausente"]||0},
+  ].filter(s=>s.n>0);
+
+  const total = DATA.total;
+  const cx=75, cy=75, r=58, sw=20;
+  const circ = 2*Math.PI*r;
+  let offset = 0;
+  let svgHTML = "";
+  segs.forEach(s=>{
+    const frac = s.n/total;
+    const len = frac*circ;
+    svgHTML += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${sw}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+    offset += len;
+  });
+  const pct = Math.round(((DATA.status_count["Completo"]||0)/total)*100);
+  svgHTML += `<text x="${cx}" y="${cy-2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="26" font-weight="500" fill="var(--ink)">${pct}%</text>`;
+  svgHTML += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--muted)">sincronizado</text>`;
+  svg.innerHTML = svgHTML;
+
+  legend.innerHTML = "";
+  segs.forEach(s=>{
+    legend.appendChild(el("div", {class:"legend-item"}, [
+      el("span", {class:"legend-swatch", style:`background:${s.color}`}),
+      el("span", {}, [document.createTextNode(s.key)]),
+      el("b", {}, [document.createTextNode(s.n)])
+    ]));
+  });
+}
+
+function renderTipoBars(){
+  const wrap = document.getElementById("tipo-bars");
+  const entries = Object.entries(DATA.tipo_count).sort((a,b)=>b[1]-a[1]);
+  const max = Math.max(...entries.map(e=>e[1]));
+  wrap.innerHTML = "";
+  entries.forEach(([tipo, n])=>{
+    const pct = (n/max*100).toFixed(1);
+    const row = el("div", {class:"bar-row"}, [
+      el("div", {class:"bar-label"}, [document.createTextNode(tipo)]),
+      el("div", {class:"bar-track"}, [
+        el("div", {class:"bar-fill", style:`width:${pct}%;background:${TIPO_COLORS[tipo]||"var(--accent)"}`})
+      ]),
+      el("div", {class:"bar-value"}, [document.createTextNode(n)])
+    ]);
+    wrap.appendChild(row);
+  });
+}
+
+function renderSetorChart(){
+  const wrap = document.getElementById("setor-chart");
+  const legend = document.getElementById("setor-legend");
+  wrap.innerHTML = "";
+  const maxTotal = Math.max(...DATA.setores_order.map(s=>{
+    const obj = DATA.setor_tipo[s]||{};
+    return Object.values(obj).reduce((a,b)=>a+b,0);
+  }));
+  DATA.setores_order.forEach(setor=>{
+    const obj = DATA.setor_tipo[setor]||{};
+    const total = Object.values(obj).reduce((a,b)=>a+b,0);
+    const track = el("div", {class:"setor-track"});
+    DATA.tipos_order.forEach(tipo=>{
+      const n = obj[tipo]||0;
+      if(n<=0) return;
+      const pct = (n/maxTotal*100).toFixed(2);
+      track.appendChild(el("div", {class:"setor-seg", title:`${tipo}: ${n}`, style:`width:${pct}%;background:${TIPO_COLORS_HEX[tipo]}`}));
+    });
+    const row = el("div", {class:"setor-row"}, [
+      el("div", {class:"setor-name", title:setor}, [document.createTextNode(setor)]),
+      track,
+      el("div", {class:"setor-total"}, [document.createTextNode(total)])
+    ]);
+    wrap.appendChild(row);
+  });
+
+  legend.innerHTML = "";
+  DATA.tipos_order.forEach(tipo=>{
+    legend.appendChild(el("div", {class:"legend-item"}, [
+      el("span", {class:"legend-swatch", style:`background:${TIPO_COLORS_HEX[tipo]}`}),
+      el("span", {}, [document.createTextNode(tipo)])
+    ]));
+  });
+}
+
+let sortKey = "setor";
+let sortDir = 1;
+let filters = {search:"", setor:"", tipos: new Set()};
+
+function populateFilters(){
+  const setorSel = document.getElementById("setor-filter");
+  DATA.setores_order.forEach(s=>{
+    const opt = document.createElement("option");
+    opt.value = s; opt.textContent = s;
+    setorSel.appendChild(opt);
+  });
+  setorSel.addEventListener("change", e=>{ filters.setor = e.target.value; renderTable(); });
+
+  document.getElementById("search").addEventListener("input", e=>{
+    filters.search = e.target.value.toLowerCase();
+    renderTable();
+  });
+
+  const chipWrap = document.getElementById("tipo-chips");
+  DATA.tipos_order.forEach(tipo=>{
+    const chip = el("div", {class:"chip", "data-tipo":tipo}, [document.createTextNode(tipo)]);
+    chip.addEventListener("click", ()=>{
+      if(filters.tipos.has(tipo)){ filters.tipos.delete(tipo); chip.classList.remove("active"); }
+      else { filters.tipos.add(tipo); chip.classList.add("active"); }
+      renderTable();
+    });
+    chipWrap.appendChild(chip);
+  });
+
+  document.querySelectorAll("thead th[data-key]").forEach(th=>{
+    th.addEventListener("click", ()=>{
+      const key = th.getAttribute("data-key");
+      if(sortKey === key) sortDir *= -1;
+      else { sortKey = key; sortDir = 1; }
+      renderTable();
+    });
+  });
+}
+
+window.filterStatusPending = function(){
+  filters.statusPending = true;
+  document.getElementById("search").value = "";
+  filters.search = "";
+  renderTable();
+  document.querySelector(".table-panel").scrollIntoView({behavior:"smooth", block:"start"});
+};
+
+function amb(v){
+  return v === "Sim" ? '<span class="amb-yes">●</span>' : '<span class="amb-no">–</span>';
+}
+
+function renderTable(){
+  let rows = DATA.rows.slice();
+
+  if(filters.search){
+    rows = rows.filter(r => (r.codigo+" "+r.titulo+" "+r.setor).toLowerCase().includes(filters.search));
+  }
+  if(filters.setor){
+    rows = rows.filter(r => r.setor === filters.setor);
+  }
+  if(filters.tipos.size){
+    rows = rows.filter(r => filters.tipos.has(r.tipo));
+  }
+  if(filters.statusPending){
+    rows = rows.filter(r => r.status !== "Completo");
+  }
+
+  rows.sort((a,b)=>{
+    let av = a[sortKey], bv = b[sortKey];
+    if(typeof av === "string") av = av.toLowerCase();
+    if(typeof bv === "string") bv = bv.toLowerCase();
+    if(av < bv) return -1*sortDir;
+    if(av > bv) return 1*sortDir;
+    return 0;
+  });
+
+  document.querySelectorAll("thead th[data-key]").forEach(th=>{
+    th.classList.toggle("sorted", th.getAttribute("data-key")===sortKey);
+    th.innerHTML = th.textContent.replace(" ↑","").replace(" ↓","");
+    if(th.getAttribute("data-key")===sortKey){
+      th.innerHTML += `<span class="arrow">${sortDir>0?"▲":"▼"}</span>`;
+    }
+  });
+
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  if(rows.length === 0){
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">Nenhum documento encontrado com esses filtros.</div></td></tr>`;
+  } else {
+    rows.forEach(r=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.setor}</td>
+        <td class="td-codigo">${r.codigo}</td>
+        <td class="td-titulo" title="${r.titulo}">${r.titulo}</td>
+        <td><span class="tipo-tag">${r.tipo}</span></td>
+        <td class="amb-cell">${amb(r.amb1)}</td>
+        <td class="amb-cell">${amb(r.amb2)}</td>
+        <td class="amb-cell">${amb(r.amb3)}</td>
+        <td><span class="status-pill status-${r.status}">${r.status}</span></td>
+        <td class="td-data">${r.data}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  document.getElementById("result-count").textContent = rows.length + " de " + DATA.total;
+}
+
+renderKPIs();
+renderDonut();
+renderTipoBars();
+renderSetorChart();
+populateFilters();
+renderTable();
+</script>
