@@ -720,6 +720,76 @@
     .bloco{break-inside:avoid;}
     textarea{border:1px solid #999; min-height:auto;}
   }
+
+  /* Botão ? de exemplos em cada pergunta */
+  .btn-ex{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    margin-left:8px;
+    border-radius:50%;
+    border:none;
+    background:#fff;
+    color:var(--cinza);
+    font-size:.8rem;
+    font-weight:800;
+    line-height:1;
+    cursor:pointer;
+    padding:0;
+    vertical-align:middle;
+  }
+  .btn-ex:hover{background:#ffd7d7; color:var(--vermelho);}
+  .btn-ex:focus-visible{outline:2px solid #fff; outline-offset:2px;}
+  .ex-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:400;
+    background:rgba(0,0,0,.55);
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
+  .ex-overlay.open{display:flex;}
+  .ex-panel{
+    background:#fff;
+    color:#2b2b2b;
+    border-radius:12px;
+    width:100%;
+    max-width:620px;
+    max-height:90vh;
+    overflow:auto;
+    padding:18px 22px 20px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
+  }
+  .ex-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;}
+  .ex-head-title{font-size:.8rem; font-weight:700; color:var(--vermelho); text-transform:uppercase; letter-spacing:.4px;}
+  .ex-close{
+    border:none; background:transparent; color:var(--cinza);
+    font-size:1.6rem; line-height:1; cursor:pointer; padding:0 4px;
+  }
+  .ex-question{font-size:1.02rem; font-weight:700; margin:0 0 12px;}
+  .ex-sec{font-size:.78rem; font-weight:700; color:var(--cinza); text-transform:uppercase; letter-spacing:.3px; margin:14px 0 6px;}
+  .ex-dica{margin:0; font-size:.92rem; font-style:italic; color:var(--dica);}
+  .ex-list{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .ex-list li{
+    background:#f6f6f6;
+    border-left:4px solid var(--vermelho);
+    border-radius:4px;
+    padding:9px 12px;
+    font-size:.92rem;
+    line-height:1.45;
+  }
+  .ex-table{width:100%; border-collapse:collapse; font-size:.88rem;}
+  .ex-table th, .ex-table td{border:1px solid var(--borda); padding:6px 8px; text-align:left;}
+  .ex-table th{background:#f2f2f2;}
+  .ex-actions{display:flex; justify-content:flex-end; margin-top:16px;}
+  :root[data-theme="dark"] .ex-panel{background:#242424; color:#e8e8e8;}
+  :root[data-theme="dark"] .ex-list li{background:#2e2e2e;}
+  :root[data-theme="dark"] .ex-table th{background:#2e2e2e;}
+  @media print{ .btn-ex, .ex-overlay{display:none !important;} }
 </style>
 </head>
 <body>
@@ -838,6 +908,18 @@
   </div>
 
   <footer class="rodape">Grupo Gadens — Levantamento de Processo (base para POP)</footer>
+</div>
+
+<div id="ex-overlay" class="ex-overlay" role="dialog" aria-modal="true" aria-labelledby="ex-question">
+  <div class="ex-panel">
+    <div class="ex-head">
+      <div class="ex-head-title">Exemplos de referência</div>
+      <button type="button" class="ex-close" id="ex-close" aria-label="Fechar" title="Fechar">&times;</button>
+    </div>
+    <p class="ex-question" id="ex-question"></p>
+    <div id="ex-body"></div>
+    <div class="ex-actions"><button type="button" class="btn btn-outline" id="ex-ok">Fechar</button></div>
+  </div>
 </div>
 
 <div id="vm-overlay" class="vm-overlay" role="dialog" aria-modal="true" aria-label="Modo por voz">
@@ -999,7 +1081,8 @@
   QUESTIONS.forEach(function(q){
     htmlParts.push('<div class="bloco" data-block="' + q.id + '">');
     htmlParts.push('<div class="section-bar"><h3>' + q.num + '. ' + escapeHtml(q.title) +
-      (q.required ? ' <span class="req-mark">*</span>' : '') + '</h3>' +
+      (q.required ? ' <span class="req-mark">*</span>' : '') +
+      ' <button type="button" class="btn-ex" data-qid="' + q.id + '" aria-label="Ver exemplos de resposta" title="Ver exemplos de resposta">?</button></h3>' +
       (q.label ? '<span class="tag">[' + escapeHtml(q.label) + ']</span>' : '<span class="tag">[apoio ao elaborador]</span>') +
       '</div>');
     htmlParts.push('<p class="dica">' + escapeHtml(q.dica) + '</p>');
@@ -2283,6 +2366,63 @@
       $("btn-enviar").click();
     });
     $("btn-voz").addEventListener("click", openVM);
+  })();
+
+  // ---------- Exemplos de referência (botão ? de cada pergunta) ----------
+  // Texto: EXEMPLOS.qN = ["exemplo 1", "exemplo 2"]. Tabela: EXEMPLOS.qN = [["col1","col2"], ...].
+  var EXEMPLOS = {};
+
+  (function(){
+    var exOverlay = document.getElementById("ex-overlay");
+    var exQuestion = document.getElementById("ex-question");
+    var exBody = document.getElementById("ex-body");
+    var exLastFocus = null;
+
+    function openEx(qid){
+      var q = qById[qid];
+      if(!q) return;
+      exQuestion.textContent = q.num + ". " + q.title;
+      var html = "";
+      if(q.dica){
+        html += '<div class="ex-sec">Como preencher</div><p class="ex-dica">' + escapeHtml(q.dica) + '</p>';
+      }
+      var lista = EXEMPLOS[q.id] || [];
+      if(q.type === "table"){
+        var rows = lista.length ? lista : [q.example];
+        html += '<div class="ex-sec">' + (rows.length > 1 ? "Exemplos" : "Exemplo") + '</div><table class="ex-table"><thead><tr>';
+        q.columns.forEach(function(c){ html += '<th>' + escapeHtml(c) + '</th>'; });
+        html += '</tr></thead><tbody>';
+        rows.forEach(function(r){
+          html += '<tr>';
+          r.forEach(function(v){ html += '<td>' + escapeHtml(v) + '</td>'; });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+      } else if(lista.length){
+        html += '<div class="ex-sec">' + (lista.length > 1 ? "Exemplos" : "Exemplo") + '</div><ul class="ex-list">';
+        lista.forEach(function(t){ html += '<li>' + escapeHtml(t) + '</li>'; });
+        html += '</ul>';
+      }
+      exBody.innerHTML = html;
+      exLastFocus = document.activeElement;
+      exOverlay.classList.add("open");
+      document.getElementById("ex-ok").focus();
+    }
+
+    function closeEx(){
+      if(!exOverlay.classList.contains("open")) return;
+      exOverlay.classList.remove("open");
+      if(exLastFocus && exLastFocus.focus) exLastFocus.focus();
+    }
+
+    container.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest(".btn-ex") : null;
+      if(b) openEx(b.getAttribute("data-qid"));
+    });
+    document.getElementById("ex-close").addEventListener("click", closeEx);
+    document.getElementById("ex-ok").addEventListener("click", closeEx);
+    exOverlay.addEventListener("click", function(e){ if(e.target === exOverlay) closeEx(); });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeEx(); });
   })();
 
   // ---------- Início ----------
