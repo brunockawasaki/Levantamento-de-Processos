@@ -595,7 +595,103 @@
     background:#2e2e2e;
   }
 
+  /* Modo por voz */
+  .vm-entry{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    border-left:6px solid var(--vermelho);
+  }
+  .vm-entry-text{flex:1; min-width:220px; font-size:.92rem;}
+  .vm-entry-text span{color:var(--cinza);}
+  .vm-entry .btn{display:flex; align-items:center; gap:8px;}
+  .vm-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:400;
+    background:rgba(0,0,0,.55);
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
+  .vm-overlay.open{display:flex;}
+  .vm-panel{
+    background:#fff;
+    color:#2b2b2b;
+    border-radius:12px;
+    width:100%;
+    max-width:680px;
+    max-height:94vh;
+    overflow:auto;
+    padding:18px 22px 20px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
+  }
+  .vm-head{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .vm-head-title{font-weight:700; color:var(--vermelho); font-size:1.05rem;}
+  .vm-head-step{margin-left:auto; font-size:.82rem; color:var(--cinza);}
+  .vm-close{
+    border:none; background:transparent; font-size:1.6rem; line-height:1;
+    cursor:pointer; color:var(--cinza); padding:0 4px;
+  }
+  .vm-bar{height:6px; background:#e3e3e3; border-radius:3px; overflow:hidden; margin-bottom:14px;}
+  .vm-bar-fill{height:100%; width:0; background:var(--vermelho); transition:width .3s;}
+  .vm-tag{font-size:.74rem; color:var(--dica); margin-bottom:4px;}
+  .vm-title{margin:0 0 6px; font-size:1.2rem; color:#2b2b2b; line-height:1.3;}
+  .vm-dica{margin:0 0 12px; font-size:.86rem; color:var(--dica); font-style:italic;}
+  .vm-status{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#f2f2f2; border:1px solid var(--borda); border-radius:20px;
+    padding:5px 14px; font-size:.84rem; font-weight:600; color:var(--cinza); margin-bottom:12px;
+  }
+  .vm-dot{width:10px; height:10px; border-radius:50%; background:#9a9a9a;}
+  .vm-status.vm-listening .vm-dot{background:var(--vermelho); animation:vmPulse 1s infinite;}
+  .vm-status.vm-listening{color:var(--vermelho); border-color:var(--vermelho);}
+  .vm-status.vm-speaking .vm-dot{background:var(--cinza); animation:vmPulse .7s infinite;}
+  @keyframes vmPulse{0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.35; transform:scale(1.4);}}
+  .vm-sub{font-weight:700; color:var(--vermelho); margin-bottom:8px; font-size:1rem;}
+  .vm-answer{
+    display:block; width:100%; min-height:84px; resize:vertical;
+    border:1px solid var(--borda); border-radius:6px; padding:10px 12px;
+    font-family:inherit; font-size:.98rem; background:#fff; color:#2b2b2b;
+  }
+  .vm-preview{
+    border:1px solid var(--borda); border-radius:6px; padding:10px 12px;
+    font-size:.9rem; max-height:180px; overflow:auto; background:#fafafa;
+  }
+  .vm-prow{margin-bottom:4px;}
+  .vm-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+  .vm-chip{
+    border:1px solid var(--vermelho); color:var(--vermelho); background:#fff;
+    border-radius:18px; padding:6px 14px; font-size:.88rem; font-weight:600; cursor:pointer;
+  }
+  .vm-chip:hover{background:var(--vermelho); color:#fff;}
+  .vm-interim{min-height:1.3em; margin-top:8px; font-size:.9rem; color:var(--cinza); font-style:italic;}
+  .vm-help{margin-top:6px; font-size:.84rem; color:var(--cinza);}
+  .vm-msg{
+    display:none; margin-top:10px; padding:10px 12px; border-radius:6px;
+    background:#fff4f4; border:1px solid var(--vermelho); color:#7a1418; font-size:.88rem;
+  }
+  .vm-actions, .vm-nav{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .vm-nav{border-top:1px solid #e3e3e3; padding-top:12px;}
+  .vm-nav .btn{padding:8px 12px; font-size:.82rem;}
+  .vm-final{display:none; text-align:center; padding:16px 4px;}
+  .vm-final h2{margin:0 0 8px; color:var(--vermelho);}
+  .vm-final ul{text-align:left; display:inline-block; margin:8px 0;}
+  :root[data-theme="dark"] .vm-panel{background:#242424; color:#e8e8e8;}
+  :root[data-theme="dark"] .vm-title{color:#e8e8e8;}
+  :root[data-theme="dark"] .vm-bar{background:#3a3a3a;}
+  :root[data-theme="dark"] .vm-status{background:#2e2e2e; border-color:#3a3a3a; color:#cfcfcf;}
+  :root[data-theme="dark"] .vm-answer{background:#2e2e2e; color:#e8e8e8; border-color:#3a3a3a;}
+  :root[data-theme="dark"] .vm-preview{background:#2a2a2a; border-color:#3a3a3a;}
+  :root[data-theme="dark"] .vm-chip{background:#242424;}
+  :root[data-theme="dark"] .vm-chip:hover{background:var(--vermelho);}
+  :root[data-theme="dark"] .vm-nav{border-top-color:#3a3a3a;}
+  :root[data-theme="dark"] .vm-msg{background:#3a2222; color:#ff9d9d;}
+
   @media (max-width:640px){
+    .vm-panel{padding:14px 14px 16px;}
     .id-grid{grid-template-columns:1fr;}
     header.top{flex-direction:column; align-items:flex-start;}
     .section-bar{flex-direction:column; align-items:flex-start; gap:4px;}
@@ -606,7 +702,7 @@
   /* Impressão */
   @media print{
     body{padding-top:0; background:#fff;}
-    #progress-bar-container, .actions, .btn-add-row, .btn-del-row, th.col-del, td.col-del, #pending-banner, .help-icon, .btn-mic, .btn-copy-ai, .btn-theme-toggle, .help-fab{
+    #progress-bar-container, .actions, .btn-add-row, .btn-del-row, th.col-del, td.col-del, #pending-banner, .help-icon, .btn-mic, .btn-copy-ai, .btn-theme-toggle, .help-fab, .vm-entry, .vm-overlay{
       display:none !important;
     }
     body{background:#fff !important; color:#2b2b2b !important;}
@@ -658,6 +754,14 @@
       <li>Suas respostas ficam salvas automaticamente neste computador enquanto você preenche. Ao terminar, baixe o arquivo e envie para a equipe de Processos.</li>
       <li>Se quiser, anexe prints, planilhas ou fotos junto com este arquivo ao enviar por e-mail.</li>
     </ul>
+  </div>
+
+  <div class="card vm-entry">
+    <div class="vm-entry-text"><strong>Prefere falar em vez de digitar?</strong><br><span>No Modo por voz, o formulário faz as perguntas em voz alta e você responde falando. Funciona no Chrome e no Edge.</span></div>
+    <button type="button" class="btn btn-primary" id="btn-voz">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 11z"/></svg>
+      Preencher por voz
+    </button>
   </div>
 
   <div id="pending-banner" class="hidden"></div>
@@ -734,6 +838,52 @@
   </div>
 
   <footer class="rodape">Grupo Gadens — Levantamento de Processo (base para POP)</footer>
+</div>
+
+<div id="vm-overlay" class="vm-overlay" role="dialog" aria-modal="true" aria-label="Modo por voz">
+  <div class="vm-panel">
+    <div class="vm-head">
+      <div class="vm-head-title">Modo por voz</div>
+      <div class="vm-head-step" id="vm-step"></div>
+      <button type="button" class="vm-close" id="vm-close" aria-label="Sair do modo por voz" title="Sair do modo por voz">&times;</button>
+    </div>
+    <div class="vm-bar"><div class="vm-bar-fill" id="vm-bar-fill"></div></div>
+
+    <div id="vm-main">
+      <div class="vm-tag" id="vm-tag"></div>
+      <h2 class="vm-title" id="vm-title"></h2>
+      <p class="vm-dica" id="vm-dica"></p>
+      <div class="vm-status vm-idle" id="vm-status"><span class="vm-dot"></span><span class="vm-status-text">Microfone desligado</span></div>
+      <div class="vm-sub" id="vm-sub"></div>
+      <textarea id="vm-answer" class="vm-answer" rows="3" spellcheck="true" placeholder="Sua resposta aparece aqui. Se quiser corrigir, é só digitar."></textarea>
+      <div id="vm-preview" class="vm-preview"></div>
+      <div id="vm-chips" class="vm-chips"></div>
+      <div class="vm-interim" id="vm-interim"></div>
+      <div class="vm-help" id="vm-help"></div>
+      <div class="vm-msg" id="vm-msg"></div>
+      <div class="vm-actions">
+        <button type="button" class="btn btn-primary" id="vm-done"></button>
+        <button type="button" class="btn btn-secondary" id="vm-alt"></button>
+        <button type="button" class="btn btn-outline" id="vm-redo"></button>
+      </div>
+      <div class="vm-nav">
+        <button type="button" class="btn btn-outline" id="vm-back">&larr; Voltar</button>
+        <button type="button" class="btn btn-outline" id="vm-repeat">Repetir pergunta</button>
+        <button type="button" class="btn btn-outline" id="vm-skip">Pular pergunta</button>
+        <button type="button" class="btn btn-outline" id="vm-pause">Pausar</button>
+        <button type="button" class="btn btn-outline" id="vm-exit">Sair</button>
+      </div>
+    </div>
+
+    <div id="vm-final" class="vm-final">
+      <h2>Terminamos!</h2>
+      <div id="vm-final-msg"></div>
+      <div class="vm-actions" style="justify-content:center;">
+        <button type="button" class="btn btn-primary" id="vm-review">Revisar no formulário</button>
+        <button type="button" class="btn btn-secondary" id="vm-gen">Gerar Word agora</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1486,6 +1636,654 @@
     applyTheme(next);
     try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
   });
+
+  // ---------- Modo por voz (conversa guiada, na mesma página) ----------
+  // O site lê cada pergunta em voz alta, ouve a resposta e preenche os mesmos campos do formulário.
+  (function(){
+    function $(id){ return document.getElementById(id); }
+    var overlay = $("vm-overlay"), elStep = $("vm-step"), elBar = $("vm-bar-fill"), elTag = $("vm-tag"),
+        elTitle = $("vm-title"), elDica = $("vm-dica"), elStatus = $("vm-status"), elSub = $("vm-sub"),
+        elAnswer = $("vm-answer"), elPreview = $("vm-preview"), elInterim = $("vm-interim"),
+        elHelp = $("vm-help"), elChips = $("vm-chips"), elMain = $("vm-main"), elFinal = $("vm-final"),
+        elFinalMsg = $("vm-final-msg"), elMsg = $("vm-msg"),
+        bDone = $("vm-done"), bAlt = $("vm-alt"), bRedo = $("vm-redo"), bPause = $("vm-pause");
+    var synth = window.speechSynthesis || null;
+    var ptVoice = null;
+    var st = {active:false, paused:false, idx:0, phase:"", append:false, cellDraft:"", rowEl:null, col:0,
+              silence:null, introDone:false, tipText:false, tipTable:false, tipReview:false};
+
+    var STEPS = [
+      {kind:"line", field:"id_nome", title:"Qual é o seu nome?", dica:"Nome de quem está preenchendo.", label:"Identificação", fmt:"name"},
+      {kind:"line", field:"id_email", title:"Qual é o seu e-mail corporativo?", dica:'Fale assim: "nome ponto sobrenome arroba grupogadens ponto com ponto br".', label:"Identificação", fmt:"email"},
+      {kind:"line", field:"id_setor", title:"Qual é a área dona do processo?", dica:"Exemplo: Contas a receber.", label:"Identificação"},
+      {kind:"choice", field:"id_empresa", title:"Para qual empresa do grupo é esse processo?", dica:"Diga o nome da empresa ou toque numa das opções.", label:"Identificação"},
+      {kind:"line", field:"id_tarefa", title:"Qual é o nome da tarefa ou rotina que você vai descrever?", dica:"Use o nome pelo qual ela é conhecida no dia a dia.", label:"Identificação"}
+    ].concat(QUESTIONS.map(function(q){
+      return {kind: q.type === "table" ? "table" : "text", q:q, title:q.title, dica:q.dica, label:q.label || "Apoio ao elaborador"};
+    }));
+
+    var C_NEXT = ["proxima","proxima pergunta","pode seguir","seguir","avancar","sim","certo","esta certo","ok","manter","isso","correto"];
+    var C_ADD = ["acrescentar","adicionar","falar mais","mais"];
+    var C_REDO = ["refazer","nao","apagar","comecar de novo","limpar","errado"];
+    var C_READ = ["ler","ler resposta","ouvir","ouvir resposta"];
+    var C_BACK = ["voltar","anterior"];
+    var C_REPEAT = ["repetir","repetir pergunta","de novo"];
+    var C_HINT = ["dica","ler dica","ver dica"];
+    var C_EXIT = ["sair","encerrar","cancelar"];
+    var C_SKIP = ["pular","pular pergunta"];
+    var C_YES = ["sim","tem","mais","outra","outro","adicionar","quero"];
+    var C_NO = ["nao","terminei","acabou","acabei","fim","so isso","e isso","pronto","proxima","pode seguir","seguir","nenhuma","nada"];
+    var C_END_TABLE = ["terminei","acabei","acabou","fim","e isso","so isso","pronto","nenhuma","nada"];
+    var C_DONE_SUFFIX = ["terminei","terminou","acabei","e isso","e so isso","fim da resposta","proxima pergunta","pode seguir"];
+
+    function norm(s){
+      return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+    }
+    function isExact(n, list){ return list.indexOf(n) !== -1; }
+    function hasWord(n, list){
+      var p = " " + n + " ";
+      for(var i = 0; i < list.length; i++){ if(p.indexOf(" " + list[i] + " ") !== -1) return true; }
+      return false;
+    }
+    function capFirst(s){ s = String(s || "").trim(); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+    function titleCase(s){
+      var small = ["de","da","do","dos","das","e"];
+      return String(s || "").toLowerCase().split(/\s+/).filter(Boolean).map(function(w, i){
+        return (i > 0 && small.indexOf(w) > -1) ? w : w.charAt(0).toUpperCase() + w.slice(1);
+      }).join(" ");
+    }
+    function fmtEmail(t){
+      var s = String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+      s = s.replace(/\barroba\b/g,"@").replace(/\bponto\b/g,".").replace(/\b(traco|hifen)\b/g,"-")
+           .replace(/\b(underline|sublinhado|underscore)\b/g,"_").replace(/\s+/g,"").replace(/[,;!?]/g,"").replace(/\.+$/,"");
+      return s;
+    }
+    function fmtLine(step, t){
+      var clean = String(t || "").trim().replace(/[.,;]+$/,"");
+      if(step.fmt === "name") return titleCase(clean);
+      if(step.fmt === "email") return fmtEmail(t);
+      return capFirst(clean);
+    }
+    function setVal(el, v){
+      var proto = el.tagName === "TEXTAREA" ? window.HTMLTextAreaElement.prototype :
+                  (el.tagName === "SELECT" ? window.HTMLSelectElement.prototype : window.HTMLInputElement.prototype);
+      Object.getOwnPropertyDescriptor(proto, "value").set.call(el, v);
+      el.dispatchEvent(new Event(el.tagName === "SELECT" ? "change" : "input", {bubbles:true}));
+    }
+    function appendChunk(el, chunk){
+      chunk = String(chunk || "").trim();
+      if(!chunk) return;
+      var cur = el.value;
+      if(cur.trim() === "" || /[.!?]\s*$/.test(cur)) chunk = capFirst(chunk);
+      setVal(el, cur + (cur && !/\s$/.test(cur) ? " " : "") + chunk);
+    }
+    function fieldOf(s){ return s.kind === "text" ? $(s.q.id) : $(s.field); }
+    function rowHasContent(tr){
+      var ins = tr.querySelectorAll('input[type="text"], textarea');
+      for(var i = 0; i < ins.length; i++){ if(ins[i].value.trim() !== "") return true; }
+      return false;
+    }
+    function isFilled(s){
+      if(s.kind === "table") return isQuestionFilled(s.q);
+      return fieldOf(s).value.trim() !== "";
+    }
+    function dataRows(q){ return $("tbody_" + q.id).querySelectorAll("tr.data-row"); }
+    function rowIndex(tr){ return Array.prototype.indexOf.call(tr.parentNode.querySelectorAll("tr.data-row"), tr); }
+    function esc(s){ return escapeHtml(s); }
+
+    // ----- voz (fala) -----
+    function pickVoice(){
+      if(!synth) return;
+      var vs = synth.getVoices();
+      ptVoice = null;
+      for(var i = 0; i < vs.length; i++){ if(/pt[-_]BR/i.test(vs[i].lang)){ ptVoice = vs[i]; break; } }
+      if(!ptVoice){ for(var j = 0; j < vs.length; j++){ if(/^pt/i.test(vs[j].lang)){ ptVoice = vs[j]; break; } } }
+    }
+    if(synth){ pickVoice(); synth.onvoiceschanged = pickVoice; }
+
+    var speakToken = 0;
+    function cancelSpeech(){ speakToken++; if(synth){ try{ synth.cancel(); }catch(e){} } }
+    function speak(text, cb){
+      stopListen();
+      speakToken++;
+      var my = speakToken;
+      function after(){
+        setTimeout(function(){ if(my === speakToken && st.active && !st.paused && cb) cb(); }, 300);
+      }
+      if(!synth || !text){ after(); return; }
+      try{ synth.cancel(); }catch(e){}
+      setStatus("speaking");
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "pt-BR";
+      if(ptVoice) u.voice = ptVoice;
+      var done = false, safety = null;
+      function fin(){
+        if(done) return;
+        done = true;
+        clearTimeout(safety);
+        if(my !== speakToken) return;
+        after();
+      }
+      u.onend = fin;
+      u.onerror = fin;
+      safety = setTimeout(fin, Math.max(4000, text.length * 110));
+      setTimeout(function(){ if(my === speakToken){ try{ synth.speak(u); }catch(e){ fin(); } } }, 60);
+    }
+
+    // ----- voz (escuta) -----
+    var rec = null, recSession = 0, wantListen = false;
+    function stopListen(){
+      wantListen = false;
+      recSession++;
+      if(rec){
+        try{ rec.onend = null; rec.abort(); }catch(e){}
+        rec = null;
+      }
+    }
+    function startListen(handlers){
+      stopListen();
+      if(!SpeechRecognitionCtor) return;
+      var sess = ++recSession;
+      wantListen = true;
+      function begin(){
+        if(sess !== recSession) return;
+        var r = new SpeechRecognitionCtor();
+        r.lang = "pt-BR";
+        r.continuous = true;
+        r.interimResults = true;
+        r.onstart = function(){ if(sess === recSession) setStatus("listening"); };
+        r.onresult = function(e){
+          if(sess !== recSession) return;
+          var interim = "";
+          for(var i = e.resultIndex; i < e.results.length; i++){
+            var t = e.results[i][0].transcript;
+            if(e.results[i].isFinal){ var ft = t.trim(); if(ft) handlers.final(ft); }
+            else interim += t;
+          }
+          if(sess === recSession) handlers.interim(interim.trim());
+        };
+        r.onerror = function(e){
+          if(sess !== recSession) return;
+          if(e.error === "not-allowed" || e.error === "service-not-allowed"){
+            wantListen = false; showMsg("O navegador não liberou o microfone. Clique no cadeado ao lado do endereço da página, permita o microfone e abra o Modo por voz de novo. Enquanto isso, você pode digitar a resposta na caixa.");
+          } else if(e.error === "audio-capture"){
+            wantListen = false; showMsg("Não encontrei um microfone neste computador.");
+          } else if(e.error === "network"){
+            wantListen = false; showMsg("Sem conexão com o serviço de voz do navegador. Verifique a internet. Você pode digitar a resposta na caixa.");
+          }
+        };
+        r.onend = function(){
+          if(sess !== recSession) return;
+          if(wantListen && st.active && !st.paused){ setTimeout(begin, 250); } else { setStatus("idle"); }
+        };
+        rec = r;
+        try{ r.start(); }catch(err){}
+      }
+      begin();
+    }
+
+    // ----- tela -----
+    function setStatus(s){
+      elStatus.className = "vm-status vm-" + s;
+      var txt = {speaking:"Falando… aguarde", listening:"Ouvindo… pode falar", paused:"Pausado", idle:"Microfone desligado"}[s] || "";
+      elStatus.querySelector(".vm-status-text").textContent = txt;
+    }
+    function showMsg(t){ elMsg.textContent = t; elMsg.style.display = t ? "block" : "none"; setStatus("idle"); }
+    function setHelp(html){ elHelp.innerHTML = html; }
+    function showInterim(t){ elInterim.textContent = t ? "“" + t + "”" : ""; }
+    function setButtons(spec){
+      function set(b, label){ b.style.display = label ? "" : "none"; if(label) b.textContent = label; }
+      set(bDone, spec.done); set(bAlt, spec.alt); set(bRedo, spec.redo);
+    }
+    function refreshPreview(){
+      var s = STEPS[st.idx];
+      if(s.kind !== "table") return;
+      var rows = collectTableRows(s.q.id).filter(function(r){ return r.some(function(v){ return v.trim() !== ""; }); });
+      if(!rows.length){ elPreview.innerHTML = "<em>Nenhuma linha ainda.</em>"; return; }
+      elPreview.innerHTML = rows.map(function(r, i){
+        return '<div class="vm-prow"><b>' + (i + 1) + '.</b> ' + r.map(function(v, c){
+          return esc(s.q.columns[c]) + ": " + (v.trim() ? esc(v.trim()) : "—");
+        }).join(" · ") + '</div>';
+      }).join("");
+    }
+    function refreshAnswer(){
+      var s = STEPS[st.idx];
+      if(s.kind === "table"){ refreshPreview(); return; }
+      elAnswer.value = fieldOf(s).value;
+    }
+    function render(s, i){
+      elStep.textContent = "Passo " + (i + 1) + " de " + STEPS.length;
+      elBar.style.width = Math.round((i / STEPS.length) * 100) + "%";
+      elTag.textContent = s.label;
+      elTitle.textContent = s.title;
+      elDica.textContent = s.dica || "";
+      elSub.textContent = "";
+      elInterim.textContent = "";
+      elMsg.style.display = "none";
+      elChips.innerHTML = "";
+      if(s.kind === "table"){
+        elAnswer.style.display = "none";
+        elPreview.style.display = "";
+        refreshPreview();
+      } else {
+        elPreview.style.display = "none";
+        elAnswer.style.display = "";
+        elAnswer.rows = s.kind === "text" ? 4 : 2;
+        elAnswer.value = fieldOf(s).value;
+      }
+      if(s.kind === "choice"){
+        Array.prototype.forEach.call($("id_empresa").options, function(o){
+          if(!o.value) return;
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "vm-chip"; b.textContent = o.value;
+          b.addEventListener("click", function(){ chooseOption(o.value); });
+          elChips.appendChild(b);
+        });
+      }
+    }
+
+    // ----- fluxo -----
+    function clearSilence(){ if(st.silence){ clearTimeout(st.silence); st.silence = null; } }
+    function armSilence(fn){ clearSilence(); st.silence = setTimeout(fn, 1800); }
+
+    function commonCmd(n){
+      if(isExact(n, C_REPEAT)){ repeatStep(); return true; }
+      if(isExact(n, C_BACK)){ prevStep(); return true; }
+      if(isExact(n, C_SKIP)){ nextStep(); return true; }
+      if(isExact(n, C_EXIT)){ closeVM(); return true; }
+      if(isExact(n, C_HINT)){ speak(STEPS[st.idx].dica, listenForPhase); return true; }
+      return false;
+    }
+
+    function enterStep(i){
+      clearSilence(); stopListen(); cancelSpeech();
+      st.idx = i; st.append = false; st.cellDraft = "";
+      var s = STEPS[i];
+      render(s, i);
+      var intro = (s.kind === "line" || s.kind === "choice") ? s.title : ("Pergunta " + s.q.num + ". " + s.title);
+      if(isFilled(s)){
+        st.phase = "review";
+        setHelp('Diga <b>“próxima”</b>, <b>“acrescentar”</b>, <b>“refazer”</b> ou <b>“ler”</b>.');
+        setButtons({done:"Próxima ▶", alt:"Acrescentar", redo:"Refazer"});
+        speak(intro + (s.kind === "table" ? " Já existe uma tabela anotada." : " Já existe uma resposta anotada.") +
+              " Diga próxima para manter, acrescentar ou refazer.", listenForPhase);
+      } else if(s.kind === "table"){
+        var tip = st.tipTable ? "" : " Vou perguntar campo por campo, uma linha de cada vez.";
+        st.tipTable = true;
+        speak(intro + tip, startTable);
+      } else if(s.kind === "line"){
+        speak(intro, startLine);
+      } else if(s.kind === "choice"){
+        speak(intro, startChoice);
+      } else {
+        var tip2 = st.tipText ? "" : " Quando terminar de responder, diga terminei.";
+        st.tipText = true;
+        speak(intro + tip2, startDictation);
+      }
+    }
+    function nextStep(){
+      if(st.idx + 1 >= STEPS.length) finishAll(); else enterStep(st.idx + 1);
+    }
+    function prevStep(){ enterStep(Math.max(0, st.idx - 1)); }
+    function repeatStep(){
+      clearSilence(); stopListen();
+      var s = STEPS[st.idx];
+      var txt = s.kind === "table" || s.kind === "text" ? "Pergunta " + s.q.num + ". " + s.title : s.title;
+      speak(txt, function(){ if(st.phase === "cell") askCell(); else listenForPhase(); });
+    }
+    function listenForPhase(){
+      switch(st.phase){
+        case "dictate": startListen({final:onDictFinal, interim:showInterim}); break;
+        case "line": startListen({final:onLineFinal, interim:function(t){ showInterim(t || st.cellDraft); if(st.cellDraft && t) armSilence(commitLine); }}); break;
+        case "choice": startListen({final:onChoiceFinal, interim:showInterim}); break;
+        case "review": startListen({final:onReviewFinal, interim:showInterim}); break;
+        case "cell": startListen({final:onCellFinal, interim:function(t){ showInterim(t || st.cellDraft); if(st.cellDraft && t) armSilence(commitCellNow); }}); break;
+        case "more": startListen({final:onMoreFinal, interim:showInterim}); break;
+      }
+    }
+
+    // --- texto livre ---
+    function startDictation(){
+      st.phase = "dictate";
+      setHelp('Fale sua resposta. Quando acabar, diga <b>“terminei”</b>. Para apagar tudo, diga <b>“refazer”</b>.');
+      setButtons({done:"Terminei a resposta"});
+      listenForPhase();
+    }
+    function onDictFinal(t){
+      var s = STEPS[st.idx], el = fieldOf(s), n = norm(t);
+      if(isExact(n, ["refazer","apagar tudo","comecar de novo"])){ setVal(el, ""); refreshAnswer(); showInterim(""); return; }
+      if(commonCmd(n)) return;
+      for(var i = 0; i < C_DONE_SUFFIX.length; i++){
+        var p = C_DONE_SUFFIX[i];
+        if(n === p || n.slice(-(p.length + 1)) === " " + p){
+          var words = t.trim().split(/\s+/);
+          var cleaned = words.slice(0, Math.max(0, words.length - p.split(" ").length)).join(" ");
+          appendChunk(el, cleaned);
+          refreshAnswer();
+          finishDictation();
+          return;
+        }
+      }
+      appendChunk(el, t);
+      refreshAnswer();
+      showInterim("");
+    }
+    function finishDictation(){
+      var s = STEPS[st.idx], el = fieldOf(s);
+      var v = el.value.trim();
+      if(v && !/[.!?:;]$/.test(v)) setVal(el, v + ".");
+      refreshAnswer();
+      toReview();
+    }
+    function toReview(){
+      clearSilence(); stopListen();
+      st.phase = "review";
+      setHelp('Diga <b>“próxima”</b>, <b>“acrescentar”</b>, <b>“refazer”</b> ou <b>“ler”</b>.');
+      setButtons({done:"Próxima ▶", alt:"Acrescentar", redo:"Refazer"});
+      showInterim("");
+      var tip = st.tipReview ? "" : " Se quiser ouvir o que anotei, diga ler.";
+      st.tipReview = true;
+      speak("Anotado. Diga próxima, acrescentar ou refazer." + tip, listenForPhase);
+    }
+
+    // --- campos de uma linha (identificação) ---
+    function startLine(){
+      st.phase = "line"; st.cellDraft = "";
+      setHelp("Pode falar. Eu anoto quando você fizer uma pausa.");
+      setButtons({done:"Anotar agora"});
+      listenForPhase();
+    }
+    function onLineFinal(t){
+      var n = norm(t);
+      if(commonCmd(n)) return;
+      st.cellDraft += (st.cellDraft ? " " : "") + t;
+      showInterim(st.cellDraft);
+      armSilence(commitLine);
+    }
+    function commitLine(){
+      clearSilence();
+      var s = STEPS[st.idx], el = fieldOf(s);
+      if(!st.cellDraft.trim()){ return; }
+      var txt = fmtLine(s, st.cellDraft);
+      setVal(el, st.append && el.value.trim() ? (s.fmt === "email" ? el.value + txt : el.value + " " + txt) : txt);
+      st.cellDraft = ""; st.append = false;
+      refreshAnswer();
+      toReview();
+    }
+
+    // --- escolha (empresa) ---
+    function matchOption(text){
+      var sp = norm(text).replace(/ /g, "");
+      if(!sp) return null;
+      var opts = Array.prototype.filter.call($("id_empresa").options, function(o){ return o.value; });
+      var exact = [], partial = [];
+      opts.forEach(function(o){
+        var ov = norm(o.value).replace(/ /g, "");
+        if(sp === ov || sp.indexOf(ov) !== -1) exact.push({v:o.value, l:ov.length});
+        else if(sp.length >= 4 && ov.indexOf(sp) !== -1) partial.push(o.value);
+      });
+      if(exact.length){ exact.sort(function(a, b){ return b.l - a.l; }); return exact[0].v; }
+      return partial.length === 1 ? partial[0] : null;
+    }
+    function startChoice(){
+      st.phase = "choice";
+      setHelp("Diga o nome da empresa ou toque numa das opções.");
+      setButtons({});
+      listenForPhase();
+    }
+    function chooseOption(v){
+      clearSilence(); stopListen();
+      setVal($("id_empresa"), v);
+      elAnswer.value = v;
+      speak("Empresa " + v + " anotada.", nextStep);
+    }
+    function onChoiceFinal(t){
+      var n = norm(t);
+      if(commonCmd(n)) return;
+      var v = matchOption(t);
+      if(v) chooseOption(v);
+      else { showInterim(t); speak("Não encontrei essa empresa. Diga o nome de uma das opções que aparecem na tela.", listenForPhase); }
+    }
+
+    // --- revisão (depois de responder) ---
+    function onReviewFinal(t){
+      var n = norm(t);
+      showInterim(t);
+      if(hasWord(n, C_EXIT)) { closeVM(); return; }
+      if(hasWord(n, C_BACK)) { prevStep(); return; }
+      if(hasWord(n, C_REPEAT)) { repeatStep(); return; }
+      if(hasWord(n, C_HINT)) { speak(STEPS[st.idx].dica, listenForPhase); return; }
+      if(hasWord(n, C_READ)) { readAnswer(); return; }
+      if(hasWord(n, C_REDO)) { redo(); return; }
+      if(hasWord(n, C_ADD)) { addMore(); return; }
+      if(hasWord(n, C_SKIP) || hasWord(n, C_NEXT)) { nextStep(); return; }
+      setHelp('Não entendi. Diga <b>“próxima”</b>, <b>“acrescentar”</b>, <b>“refazer”</b> ou <b>“ler”</b>.');
+    }
+    function readAnswer(){
+      var s = STEPS[st.idx], txt;
+      if(s.kind === "table"){
+        var rows = collectTableRows(s.q.id).filter(function(r){ return r.some(function(v){ return v.trim() !== ""; }); });
+        txt = rows.length ? rows.map(function(r, i){
+          return "Linha " + (i + 1) + ". " + r.map(function(v, c){ return s.q.columns[c] + ": " + (v.trim() || "em branco"); }).join(". ");
+        }).join(". ") : "Ainda não há nada anotado.";
+      } else {
+        txt = fieldOf(s).value.trim() || "Ainda não há resposta anotada.";
+        if(s.fmt === "email") txt = txt.replace(/@/g, " arroba ").replace(/\./g, " ponto ");
+      }
+      speak(txt, listenForPhase);
+    }
+    function addMore(){
+      var s = STEPS[st.idx];
+      if(s.kind === "table"){ startTable(); }
+      else if(s.kind === "line"){ st.append = true; speak("Pode falar.", startLine); }
+      else if(s.kind === "choice"){ speak("Qual empresa?", startChoice); }
+      else { speak("Pode falar.", startDictation); }
+    }
+    function redo(){
+      var s = STEPS[st.idx];
+      if(s.kind === "table"){
+        var rows = dataRows(s.q);
+        for(var i = rows.length - 1; i > 0; i--){ rows[i].parentNode.removeChild(rows[i]); }
+        rows[0].querySelectorAll('input[type="text"], textarea').forEach(function(inp){ setVal(inp, ""); });
+        renumber(s.q.id); scheduleSave(); updateProgress(); refreshPreview();
+        startTable();
+      } else if(s.kind === "choice"){
+        setVal($("id_empresa"), ""); refreshAnswer();
+        speak("Certo. Qual empresa?", startChoice);
+      } else {
+        setVal(fieldOf(s), ""); refreshAnswer();
+        speak("Certo. Pode falar.", s.kind === "line" ? startLine : startDictation);
+      }
+    }
+
+    // --- tabelas ---
+    function startTable(){
+      var s = STEPS[st.idx], q = s.q, tbody = $("tbody_" + q.id);
+      var rows = tbody.querySelectorAll("tr.data-row");
+      var last = rows[rows.length - 1];
+      if(!last || rowHasContent(last)){
+        addRow(q.id, null);
+        rows = tbody.querySelectorAll("tr.data-row");
+        last = rows[rows.length - 1];
+      }
+      st.rowEl = last; st.col = 0;
+      refreshPreview();
+      askCell();
+    }
+    function askCell(){
+      clearSilence(); stopListen();
+      var q = STEPS[st.idx].q;
+      st.phase = "cell"; st.cellDraft = "";
+      var rowNo = rowIndex(st.rowEl) + 1;
+      var label = q.columns[st.col];
+      elSub.textContent = "Linha " + rowNo + " — " + label;
+      showInterim("");
+      setHelp('Fale este campo. Diga <b>“pular”</b> para deixar em branco' + (st.col === 0 ? ' ou <b>“terminei”</b> para encerrar a tabela' : '') + '.');
+      setButtons({done:"Próximo campo", alt:"Deixar em branco"});
+      speak((st.col === 0 ? "Linha " + rowNo + ". " : "") + label + ".", listenForPhase);
+    }
+    function onCellFinal(t){
+      var n = norm(t);
+      if(isExact(n, ["pular","pular campo","em branco","deixar em branco"])){ commitCell(""); return; }
+      if(isExact(n, C_REPEAT)){ askCell(); return; }
+      if(st.cellDraft === "" && isExact(n, C_BACK)){
+        if(st.col > 0){ st.col--; askCell(); } else { prevStep(); }
+        return;
+      }
+      if(isExact(n, C_EXIT)){ closeVM(); return; }
+      if(st.col === 0 && st.cellDraft === "" && isExact(n, C_END_TABLE)){ endTable(); return; }
+      st.cellDraft += (st.cellDraft ? " " : "") + t;
+      showInterim(st.cellDraft);
+      armSilence(commitCellNow);
+    }
+    function commitCellNow(){ commitCell(st.cellDraft); }
+    function commitCell(text){
+      clearSilence(); stopListen();
+      var q = STEPS[st.idx].q;
+      var inputs = st.rowEl.querySelectorAll('input[type="text"], textarea');
+      setVal(inputs[st.col], capFirst(String(text || "").trim().replace(/[.,;]+$/, "")));
+      st.cellDraft = "";
+      refreshPreview();
+      st.col++;
+      if(st.col < q.columns.length){ askCell(); } else { rowDone(); }
+    }
+    function rowDone(){
+      st.phase = "more";
+      elSub.textContent = "";
+      showInterim("");
+      setHelp('Diga <b>“sim”</b> para mais uma linha ou <b>“não”</b> para ir para a próxima pergunta.');
+      setButtons({done:"Não, próxima pergunta", alt:"Sim, mais uma linha"});
+      speak("Linha " + (rowIndex(st.rowEl) + 1) + " anotada. Tem mais uma linha? Diga sim ou não.", listenForPhase);
+    }
+    function onMoreFinal(t){
+      var n = norm(t);
+      showInterim(t);
+      if(hasWord(n, C_EXIT)){ closeVM(); return; }
+      if(hasWord(n, C_BACK)){ prevStep(); return; }
+      if(hasWord(n, C_NO)){ endTable(); return; }
+      if(hasWord(n, C_YES)){ newRow(); return; }
+      setHelp('Não entendi. Diga <b>“sim”</b> para mais uma linha ou <b>“não”</b> para seguir.');
+    }
+    function newRow(){
+      var q = STEPS[st.idx].q;
+      addRow(q.id, null);
+      var rows = dataRows(q);
+      st.rowEl = rows[rows.length - 1]; st.col = 0;
+      scheduleSave(); updateProgress();
+      refreshPreview();
+      askCell();
+    }
+    function endTable(){
+      clearSilence(); stopListen();
+      var q = STEPS[st.idx].q;
+      var rows = dataRows(q);
+      var last = rows[rows.length - 1];
+      if(rows.length > 1 && last && !rowHasContent(last)){
+        last.parentNode.removeChild(last);
+        renumber(q.id); scheduleSave(); updateProgress();
+      }
+      nextStep();
+    }
+
+    // --- botões da tela ---
+    bDone.addEventListener("click", function(){
+      switch(st.phase){
+        case "dictate": finishDictation(); break;
+        case "line": commitLine(); break;
+        case "cell": commitCell(st.cellDraft); break;
+        case "more": endTable(); break;
+        case "review": nextStep(); break;
+      }
+    });
+    bAlt.addEventListener("click", function(){
+      switch(st.phase){
+        case "cell": commitCell(""); break;
+        case "more": newRow(); break;
+        case "review": addMore(); break;
+      }
+    });
+    bRedo.addEventListener("click", function(){ if(st.phase === "review") redo(); });
+    $("vm-back").addEventListener("click", prevStep);
+    $("vm-repeat").addEventListener("click", repeatStep);
+    $("vm-skip").addEventListener("click", nextStep);
+    bPause.addEventListener("click", function(){
+      if(!st.paused){
+        st.paused = true;
+        clearSilence(); stopListen(); cancelSpeech();
+        setStatus("paused");
+        bPause.textContent = "Continuar";
+      } else {
+        st.paused = false;
+        bPause.textContent = "Pausar";
+        repeatStep();
+      }
+    });
+    $("vm-exit").addEventListener("click", closeVM);
+    $("vm-close").addEventListener("click", closeVM);
+    elAnswer.addEventListener("input", function(){
+      var s = STEPS[st.idx];
+      if(s && s.kind !== "table") setVal(fieldOf(s), elAnswer.value);
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && st.active) closeVM();
+    });
+
+    // --- abrir, fechar e terminar ---
+    function openVM(){
+      if(!SpeechRecognitionCtor){
+        alert("O Modo por voz funciona no Chrome ou no Edge (no computador ou no celular Android). Abra este link por um deles.");
+        return;
+      }
+      stopActiveRecognition();
+      overlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+      st.active = true; st.paused = false;
+      bPause.textContent = "Pausar";
+      elMain.style.display = ""; elFinal.style.display = "none"; elMsg.style.display = "none";
+      var start = -1;
+      for(var i = 0; i < STEPS.length; i++){ if(!isFilled(STEPS[i])){ start = i; break; } }
+      if(start < 0) start = 0;
+      render(STEPS[start], start);
+      st.idx = start;
+      setStatus("idle");
+      setButtons({});
+      var intro = st.introDone ? "Vamos continuar." :
+        "Modo por voz ligado. Eu faço a pergunta e, quando eu terminar de falar, você responde falando. Você também pode dizer: repetir, voltar ou pular.";
+      st.introDone = true;
+      speak(intro, function(){ enterStep(start); });
+    }
+    function closeVM(){
+      clearSilence(); stopListen(); cancelSpeech();
+      st.active = false;
+      overlay.classList.remove("open");
+      document.body.style.overflow = "";
+      setStatus("idle");
+    }
+    function finishAll(){
+      clearSilence(); stopListen(); cancelSpeech();
+      st.phase = "done";
+      elMain.style.display = "none";
+      elFinal.style.display = "block";
+      elBar.style.width = "100%";
+      elStep.textContent = "Concluído";
+      var missing = getMissingRequired();
+      elFinalMsg.innerHTML = missing.length
+        ? "<p>Ainda faltam campos obrigatórios:</p><ul>" + missing.map(function(m){ return "<li>" + esc(m.label) + "</li>"; }).join("") + "</ul><p>Revise no formulário antes de gerar o Word.</p>"
+        : "<p>Todas as respostas obrigatórias foram preenchidas. Revise no formulário e gere o Word.</p>";
+      speak(missing.length ? "Terminamos, mas ainda faltam alguns campos obrigatórios. Revise no formulário." : "Terminamos. Revise as respostas no formulário e depois gere o Word.", null);
+    }
+    $("vm-review").addEventListener("click", function(){
+      var missing = getMissingRequired();
+      closeVM();
+      highlightMissing(missing);
+      $("questions-container").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    $("vm-gen").addEventListener("click", function(){
+      closeVM();
+      $("btn-enviar").click();
+    });
+    $("btn-voz").addEventListener("click", openVM);
+  })();
 
   // ---------- Início ----------
   loadState();
