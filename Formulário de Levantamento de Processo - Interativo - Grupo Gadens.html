@@ -773,21 +773,24 @@
   .ex-question{font-size:1.02rem; font-weight:700; margin:0 0 12px;}
   .ex-sec{font-size:.78rem; font-weight:700; color:var(--cinza); text-transform:uppercase; letter-spacing:.3px; margin:14px 0 6px;}
   .ex-dica{margin:0; font-size:.92rem; font-style:italic; color:var(--dica);}
-  .ex-list{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
-  .ex-list li{
+  .ex-nota{margin:0 0 8px; font-size:.84rem; color:var(--cinza);}
+  .ex-item{margin:0 0 12px;}
+  .ex-fonte{font-size:.74rem; font-weight:700; color:var(--vermelho); margin:0 0 4px;}
+  .ex-texto{
     background:#f6f6f6;
     border-left:4px solid var(--vermelho);
     border-radius:4px;
     padding:9px 12px;
     font-size:.92rem;
     line-height:1.45;
+    white-space:pre-line;
   }
   .ex-table{width:100%; border-collapse:collapse; font-size:.88rem;}
   .ex-table th, .ex-table td{border:1px solid var(--borda); padding:6px 8px; text-align:left;}
   .ex-table th{background:#f2f2f2;}
   .ex-actions{display:flex; justify-content:flex-end; margin-top:16px;}
   :root[data-theme="dark"] .ex-panel{background:#242424; color:#e8e8e8;}
-  :root[data-theme="dark"] .ex-list li{background:#2e2e2e;}
+  :root[data-theme="dark"] .ex-texto{background:#2e2e2e;}
   :root[data-theme="dark"] .ex-table th{background:#2e2e2e;}
   @media print{ .btn-ex, .ex-overlay{display:none !important;} }
 </style>
@@ -2369,8 +2372,24 @@
   })();
 
   // ---------- Exemplos de referência (botão ? de cada pergunta) ----------
-  // Texto: EXEMPLOS.qN = ["exemplo 1", "exemplo 2"]. Tabela: EXEMPLOS.qN = [["col1","col2"], ...].
-  var EXEMPLOS = {};
+  // Cada exemplo é um trecho de POP já aprovado: {fonte, texto} ou {fonte, linhas:[[col1, col2, ...]]}.
+  var EXEMPLOS = {q1:[{"fonte": "PO.GG.SUP.003 · Follow Up de Pedidos de Compra", "texto": "Garantir o monitoramento ativo dos prazos de entrega de materiais e serviços contratados, mitigando riscos de desabastecimento nas obras e garantindo a atualização das datas de entrega no sistema ERP Mega."}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "texto": "Estabelecer procedimentos padronizados para o controle de estoque do almoxarifado, garantindo a correta movimentação, registro, armazenamento e monitoramento dos materiais, evitando perdas, faltas ou divergências de estoque."}, {"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Definir as etapas do processo de Pré-Planejamento de obras, desde a finalização do projeto pré-executivo pelo Comitê de Pré-Planejamento até a apresentação e aprovação do pré-planejamento, contemplando a análise dos projetos, a verificação e atualização do macrofluxo, o cálculo do Takt, a análise de obras similares e a validação junto ao Coordenador de Obras e à Diretoria."}],
+    q2:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Empresa: Gadens Incorporadora e Construtora Make It. Setor envolvido: Planejamento."}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "Aplica-se às Incorporadoras Make It e Gadens. Áreas envolvidas: Jurídico, Novos Negócios, Diretoria, Incorporação, Controladoria, Contabilidade, Financeiro e Engenharia."}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "texto": "Aplicável ao Grupo Gadens, tendo como setores envolvidos, Suprimentos e Almoxarifado (Suprimentos)."}],
+    q3:[{"fonte": "PO.GG.NNG.001 · Definição das Diretrizes de Prospecção", "texto": "PO.GG.QLD.002 - Regras de elaboração de documento Grupo Gadens;\nPlanejamento estratégico do Grupo Gadens;\nPolíticas internas aplicáveis."}, {"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "texto": "PO.GG.NNG.001 - Definição das Diretrizes de Prospecção;\nPO.GG.NNG.002 - Análise de Aderência Estratégica da Oportunidade;\nPO.GG.NNG.003 - Elaboração do Estudo de Massa para Viabilidade V0;\nDiretrizes de produto da marca Make It;\nPolíticas internas aplicáveis."}, {"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Fluxograma de Pré-Planejamento (Bizagi) – raia “Planejamento”;\nPO.GG.QLD.002 – Padronização de Documentos (Grupo Gadens)."}],
+    q4:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["Takt", "Ritmo/tempo padrão de produção estabelecido para nivelar a execução das atividades da obra."], ["Macrofluxo", "Sequenciamento macro das atividades e etapas da obra, com suas dependências."]]}, {"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "linhas": [["Mapa de Cotação", "Quadro comparativo que consolida preços, prazos, condições de pagamento e especificações técnicas de diferentes fornecedores."], ["TCO (Total Cost of Ownership)", "Custo Total de Propriedade. Vai além do preço de face do produto, incluindo frete, instalação, manutenção e impostos."]]}, {"fonte": "PO.GG.NNG.001 · Definição das Diretrizes de Prospecção", "linhas": [["VGV", "Valor Geral de Vendas."], ["VPL", "Valor Presente Líquido."]]}, {"fonte": "PO.GG.SUP.003 · Follow Up de Pedidos de Compra", "linhas": [["Follow Up (FUP)", "Acompanhamento diligente do status de um pedido junto ao fornecedor."], ["Data de Necessidade", "Prazo limite estipulado pela engenharia/obra para o recebimento do insumo."]]}],
+    q5:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["ClickUp", "Ferramenta de gestão de tarefas utilizada para abertura e acompanhamento das atividades do processo."], ["BD de Índices", "Base de dados com índices de referência, obras já existentes e dados de mercado."], ["BD de Similaridades", "Base de dados com obras similares utilizadas como referência para o planejamento."]]}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "E-mail corporativo\nSistema MEGA\nSharePoint\nMicrosoft Word\nPDF\nClickSign\nRead AI (ou ferramenta similar)\nClickUp"}, {"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "texto": "ERP Mega (telas de Cotação de Preço e FUP);\nMapa de Equalização de Propostas (Excel ou Power BI)."}],
+    q6:[{"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "texto": "Solicitação de Compra (SC);\nPropostas comerciais detalhadas;\nEspecificações técnicas e memoriais descritivos;"}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "Contrato ou minuta contratual assinada\nRelação de documentos prevista contratualmente\nCertidões do imóvel\nCertidões dos proprietários/permutantes\nDocumentos pessoais ou societários\nComprovantes de pagamento de certidões"}, {"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "texto": "Estudo de Massa consolidado (NN-POP-003);\nTipologia padrão dos empreendimentos;\nParâmetros históricos de custo;\nPremissas técnicas e construtivas vigentes."}],
+    q7:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Analista de Planejamento;\nCoordenação de Planejamento;\nCoordenador de Obras;\nDiretoria;\nComitê de Pré-Planejamento."}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "texto": "Solicitante (demanda de material e/ou serviço);\nCompras (cotações e negociações);\nSupervisor de Almoxarifado (supervisor responsável pelo estoque);\nGerente de Suprimentos (decisão final)."}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "Jurídico\nNovos Negócios\nIncorporação\nControladoria\nFinanceiro\nDiretoria"}],
+    q8:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Abertura da tarefa: a Coordenação de Planejamento abre a tarefa no ClickUp após a finalização do projeto pré-executivo informado pelo Comitê de Pré-Planejamento"}, {"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "texto": "Recebimento da solicitação de Orçamento Paramétrico, a partir do Estudo de Massa consolidado"}, {"fonte": "PO.GG.SUP.003 · Follow Up de Pedidos de Compra", "texto": "Acessar o ERP Mega e extrair/verificar a lista de pedidos agendados para o dia corrente ou já em atraso"}],
+    q9:[{"fonte": "PO.GG.SUP.007 · Controle de Estoque", "texto": "Registro de entrada de material (Almoxarife): Conferir documentação e quantidade recebida, verificar a integridade do material, registrar a entrada no sistema Mega e encaminhar o material para armazenamento;\nArmazenamento de materiais (Almoxarife): Organizar os materiais conforme tipo, categoria e frequência de uso, utilizar identificação de prateleiras e estantes, armazenar os materiais em locais adequados e manter o almoxarifado limpo e organizado;\nControle de saída de materiais (Almoxarife): Receber a requisição de material autorizada, coletar assinatura do responsável pela retirada, conferir os dados da solicitação, separar o material solicitado e registrar a saída no sistema;"}, {"fonte": "PO.GG.CON.001 · Due Diligence Contábil", "texto": "Identificação da necessidade de Due Diligence Contábil em função do modelo de aquisição (via CNPJ do permutante);\nSolicitação formal, pelo Jurídico, da documentação contábil prevista em contrato;\nRecebimento e organização da documentação contábil;\nAnálise técnica das demonstrações financeiras pela Contabilidade, contemplando aspectos contábeis, financeiros e tributários relevantes;\nEmissão de parecer contábil sobre a saúde financeira do CNPJ do permutante, contendo conclusão objetiva, principais riscos identificados e recomendações;\nEncaminhamento do parecer às áreas envolvidas para subsidiar a decisão da Diretoria."}, {"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "texto": "Recebimento da solicitação de Orçamento Paramétrico, a partir do Estudo de Massa consolidado;\nAnálise das premissas técnicas, tipologia padrão e parâmetros históricos aplicáveis;\nElaboração do Orçamento Paramétrico;\nConsolidação do material como base para a elaboração da Viabilidade Econômica V0."}],
+    q10:[{"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "texto": "Consolidação do material como base para a elaboração da Viabilidade Econômica V0."}, {"fonte": "PO.GG.CON.001 · Due Diligence Contábil", "texto": "Encaminhamento do parecer às áreas envolvidas para subsidiar a decisão da Diretoria."}, {"fonte": "PO.GG.SUP.003 · Follow Up de Pedidos de Compra", "texto": "Se o cronograma for comprometido, acionar o plano de desvio (seção Desvios/Ações Necessárias); caso contrário, atualizar o pedido para a nova data de previsão de entrega."}],
+    q11:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["Abertura da tarefa"], ["Análise de projetos"], ["Verificação e atualização do macrofluxo"], ["Verificação dos índices e cálculo do Takt"], ["Análise de obras similares"], ["Validação com o Coordenador de Obras"], ["Apresentação à Diretoria"], ["Encerramento"]]}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "linhas": [["Registro de entrada de material"], ["Armazenamento de materiais"], ["Controle de saída de materiais"], ["Inventário de estoque"], ["Ajuste de estoque"], ["Gestão do almoxarifado"]]}, {"fonte": "PO.GG.ORC.001 · Elaboração do Orçamento Paramétrico para Viabilidade V0", "linhas": [["Recebimento da solicitação de Orçamento Paramétrico, a partir do Estudo de Massa consolidado"], ["Análise das premissas técnicas, tipologia padrão e parâmetros históricos aplicáveis"], ["Elaboração do Orçamento Paramétrico"], ["Consolidação do material como base para a elaboração da Viabilidade Econômica V0"]]}],
+    q12:[{"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "linhas": [["Comprador", "Realizar a equalização comercial, conduzir negociações, exigir documentação fiscal e montar o Mapa de Cotação.", "Autonomia total para negociar e instruir o processo de cotação, mas sem poder de aprovar o pedido final de compra."]]}, {"fonte": "PO.GG.CON.001 · Due Diligence Contábil", "linhas": [["Jurídico", "Solicitar documentação contábil e encaminhar à Contabilidade.", "Autonomia para solicitar documentos"], ["Contabilidade (dona do processo)", "Analisar documentos e emitir parecer contábil.", "Autonomia técnica plena"]]}, {"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["Coordenador de Obras", "Participar da reunião de validação do pré-planejamento; acordar alterações necessárias junto à Coordenação de Planejamento.", "Aprovar ou reprovar o pré-planejamento antes do envio à Diretoria."]]}, {"fonte": "PO.GG.NNG.001 · Definição das Diretrizes de Prospecção", "linhas": [["Dono do Processo (Diretoria)", "Definir e aprovar as diretrizes estratégicas, objetivos e metas de prospecção.", "Autonomia total para decisão estratégica"], ["Marketing / Inteligência", "Consolidar e apresentar dados mercadológicos e de déficit habitacional.", "Autonomia técnica para coleta e análise de dados"]]}],
+    q13:[{"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "texto": "% de Saving da Compra: valor negociado em relação ao valor orçado/previsto.\nLead Time de Compra: tempo entre a recepção da SC e o fechamento do mapa."}, {"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "texto": "Aderência ao cronograma de entrega de pré-planejamento: prazo disponibilizado para obras (30 dias a partir da finalização do pré-executivo), medido em dias."}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "Este POP não possui indicadores específicos próprios."}],
+    q14:[{"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "texto": "Pagamentos antecipados devem ser exceção absoluta; quando inevitáveis, devem estar condicionados a garantias contratuais, conforme a política de pagamentos.\nFornecedor único: em casos de ausência de 3 cotações, deve-se anexar obrigatoriamente a justificativa de exclusividade técnica.\nEqualização de frete: sempre validar se os preços são CIF (frete incluso) ou FOB (frete por conta do Grupo), para não distorcer o Mapa de Cotação."}, {"fonte": "PO.GG.SUP.003 · Follow Up de Pedidos de Compra", "texto": "Registro é mandatório: nenhuma repactuação de prazo deve ser feita apenas “de boca”; toda nova data e motivo de atraso devem ser inseridos no campo de observações ou histórico do pedido no ERP Mega, para fins de auditoria e alimentação do dashboard."}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "texto": "Garantir a completude da documentação antes da análise.\nAvaliar com atenção ônus reais, ações judiciais e passivos ocultos.\nFormalizar todos os riscos identificados.\nEvitar avanço do negócio sem validação jurídica conclusiva."}],
+    q15:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["Dúvidas identificadas na análise de projetos", "Solicitar resolução junto a projetos complementares e arquitetura.", "Planejamento"], ["Alteração identificada no macrofluxo", "Atualizar o macrofluxo do planejamento.", "Planejamento"]]}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "linhas": [["Documentação incompleta", "Solicitar complementação.", "Jurídico"], ["Risco jurídico relevante", "Formalizar no relatório.", "Jurídico"], ["Impossibilidade de mitigação", "Cancelar aquisição.", "Jurídico / Novos Negócios"]]}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "linhas": [["Divergência de saldo", "Validar com o Supervisor de Almoxarifado. Escalonamento: Gestor de Suprimentos.", "Almoxarife"], ["Divergência entre pedido de compra e nota fiscal", "Validar com o Supervisor de Almoxarifado. Escalonamento: Comprador responsável.", "Almoxarife"]]}],
+    q16:[{"fonte": "PO.GG.PLA.001 · Pré-Planejamento de Obras", "linhas": [["Ata do pré-planejamento", "ClickUp / E-mail"], ["Matriz de riscos", "ClickUp / E-mail"], ["Planilha de pré-planejamento", "OneDrive"]]}, {"fonte": "PO.GG.SUP.002 · Análise de Cotações e Propostas", "linhas": [["Solicitação de Compra", "ERP Mega / Approvo"], ["Mapa de Cotação", "ERP Mega / Approvo"], ["Propostas Comerciais (PDF/E-mail)", "Anexo na Cotação (Mega)"]]}, {"fonte": "PO.GG.JUR.001 · Due Diligence Jurídica", "linhas": [["Relatório de Riscos Jurídicos", "SharePoint / AutoDoc"], ["Certidões", "SharePoint"], ["Distrato", "ClickSign"]]}, {"fonte": "PO.GG.SUP.007 · Controle de Estoque", "linhas": [["Registro de Movimentações", "Mega"], ["Ficha de inventário", "Arquivo do almoxarifado (Físico) por 5 anos e sistema Mega"]]}]};
+  var EXEMPLOS_NOTAS = {"q5": "No POP, a seção de sistemas costuma ser só uma lista. No formulário, diga também para que cada sistema serve.", "q6": "No POP, esta seção lista o que chega. No formulário, diga também de quem vem e com que frequência.", "q9": "No POP, os passos aparecem em texto corrido. No formulário, separe cada passo em uma linha e preencha as colunas."};
 
   (function(){
     var exOverlay = document.getElementById("ex-overlay");
@@ -2387,26 +2406,40 @@
         html += '<div class="ex-sec">Como preencher</div><p class="ex-dica">' + escapeHtml(q.dica) + '</p>';
       }
       var lista = EXEMPLOS[q.id] || [];
-      if(q.type === "table"){
-        var rows = lista.length ? lista : [q.example];
-        html += '<div class="ex-sec">' + (rows.length > 1 ? "Exemplos" : "Exemplo") + '</div><table class="ex-table"><thead><tr>';
-        q.columns.forEach(function(c){ html += '<th>' + escapeHtml(c) + '</th>'; });
-        html += '</tr></thead><tbody>';
-        rows.forEach(function(r){
-          html += '<tr>';
-          r.forEach(function(v){ html += '<td>' + escapeHtml(v) + '</td>'; });
-          html += '</tr>';
+      if(lista.length){
+        html += '<div class="ex-sec">' + (lista.length > 1 ? "Exemplos de POPs já publicados" : "Exemplo de POP já publicado") + '</div>';
+        if(EXEMPLOS_NOTAS[q.id]){
+          html += '<p class="ex-nota">' + escapeHtml(EXEMPLOS_NOTAS[q.id]) + '</p>';
+        }
+        lista.forEach(function(it){
+          html += '<div class="ex-item"><div class="ex-fonte">' + escapeHtml(it.fonte) + '</div>';
+          if(it.texto){
+            html += '<div class="ex-texto">' + escapeHtml(it.texto) + '</div>';
+          } else {
+            html += '<table class="ex-table"><thead><tr>';
+            q.columns.forEach(function(c){ html += '<th>' + escapeHtml(c) + '</th>'; });
+            html += '</tr></thead><tbody>';
+            it.linhas.forEach(function(r){
+              html += '<tr>';
+              r.forEach(function(v){ html += '<td>' + escapeHtml(v) + '</td>'; });
+              html += '</tr>';
+            });
+            html += '</tbody></table>';
+          }
+          html += '</div>';
         });
-        html += '</tbody></table>';
-      } else if(lista.length){
-        html += '<div class="ex-sec">' + (lista.length > 1 ? "Exemplos" : "Exemplo") + '</div><ul class="ex-list">';
-        lista.forEach(function(t){ html += '<li>' + escapeHtml(t) + '</li>'; });
-        html += '</ul>';
+      } else if(q.type === "table"){
+        html += '<div class="ex-sec">Exemplo</div><table class="ex-table"><thead><tr>';
+        q.columns.forEach(function(c){ html += '<th>' + escapeHtml(c) + '</th>'; });
+        html += '</tr></thead><tbody><tr>';
+        q.example.forEach(function(v){ html += '<td>' + escapeHtml(v) + '</td>'; });
+        html += '</tr></tbody></table>';
       }
       exBody.innerHTML = html;
       exLastFocus = document.activeElement;
       exOverlay.classList.add("open");
-      document.getElementById("ex-ok").focus();
+      document.getElementById("ex-close").focus();
+      exOverlay.querySelector(".ex-panel").scrollTop = 0;
     }
 
     function closeEx(){
