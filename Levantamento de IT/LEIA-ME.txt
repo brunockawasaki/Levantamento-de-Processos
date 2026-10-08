@@ -1,0 +1,18 @@
+FORMULÁRIO DE LEVANTAMENTO DE IT (Instrução de Trabalho) — versão por blocos
+
+Arquivos
+- Formulário de Levantamento de IT - Interativo - Grupo Gadens.html -> o formulário (abre no navegador, sem instalar nada)
+- IT.GG.PRO.001 - MODELO IT com marcadores.docx                     -> modelo de Word com marcadores ({{OBJETIVO}} etc.), já embutido no formulário
+- montar_modelo_it.py       -> gera o modelo com marcadores a partir do template oficial IT.GG.PRO.001
+- montar_formulario_it.py   -> gera o formulário de IT a partir do formulário de POP
+
+Como a pessoa preenche
+1 a 4: Objetivo, Aplicação, Referências e Definições (perguntas curtas; o "?" mostra o exemplo da IT.GG.CON.001 - Cadastro de CNO).
+5: Etapas. A pessoa monta o passo a passo em blocos: "+ Título" (Etapa / Subetapa / Item, numerados 5.1, 5.1.1...),
+   "+ Texto com imagem" (escreve e, logo abaixo, anexa/cola/arrasta o print), "+ Lista de opções" e "+ Tabela Campo / Descrição".
+Capa, cabeçalho, código do documento, aprovações e Controle de Emissão ficam como no template (a equipe de Processos preenche).
+
+Para refazer quando o template de IT ou o formulário de POP mudarem (rodar nesta pasta):
+
+  python montar_modelo_it.py "<caminho do IT.GG.PRO.001 oficial>.docx" "IT.GG.PRO.001 - MODELO IT com marcadores.docx"
+  python montar_formulario_it.py "<caminho do Formulário de Levantamento de Processo - Interativo>.html" "IT.GG.PRO.001 - MODELO IT com marcadores.docx" "Formulário de Levantamento de IT - Interativo - Grupo Gadens.html"
