@@ -1,0 +1,40 @@
+FORMULÁRIO DE LEVANTAMENTO DE REGIMENTO - Grupo Gadens
+
+O QUE É
+Página com perguntas sobre uma reunião ou comitê. Ao final, gera um Word já no modelo oficial
+RE.GG.PRO.001 (capa, cabeçalho, rodapé e as 9 seções), pronto para a equipe de Processos revisar.
+
+ARQUIVOS
+- Formulário de Levantamento de Regimento - Interativo - Grupo Gadens.html : a página (abre no Chrome ou Edge; funciona sem internet)
+- RE.GG.PRO.001 - MODELO REGIMENTO com marcadores.docx : o modelo oficial com marcadores {{...}} no lugar dos textos de instrução
+- montar_modelo_regimento.py : gera o modelo com marcadores a partir do template oficial
+- montar_formulario_regimento.py : gera a página a partir do formulário de POP + o modelo com marcadores
+
+COMO REFAZER (se o template ou o formulário de POP mudarem)
+  python montar_modelo_regimento.py "<RE.GG.PRO.001 - MODELO PADRÃO DE REGIMENTO.docx>" "RE.GG.PRO.001 - MODELO REGIMENTO com marcadores.docx"
+  python montar_formulario_regimento.py "<Formulário de Levantamento de Processo - Interativo - Grupo Gadens.html>" "RE.GG.PRO.001 - MODELO REGIMENTO com marcadores.docx" "Formulário de Levantamento de Regimento - Interativo - Grupo Gadens.html"
+
+COMO AS PERGUNTAS SE LIGAM AO WORD
+  1 e 2   -> 1. Objetivo
+  3       -> 2. Aplicação
+  4       -> 3. Áreas Envolvidas (lista com marcador)
+  5 e 6   -> 4. Governança: Convocação/Agendamento
+  7 e 8   -> 4. Governança: Periodicidade
+  9       -> 4. Governança: Formato
+  10      -> 4. Governança: Pauta/Material de Apoio
+  11 e 12 -> 4. Governança: Registro/Ata
+  13      -> 5. Papéis e Responsabilidades (tabela)
+  14      -> 6. Entradas (Inputs) (tabela)
+  15      -> 7. Saídas (Outputs) (tabela)
+  16      -> 8. Referências (lista com marcador)
+  17      -> apoio ao elaborador (não vai para o Word)
+O Controle de Emissão, o código, as datas e os aprovadores ficam como no template (Processos preenche).
+
+REUNIÃO COM ETAPAS (como V0, V1 e V2 no Comitê de Novos Negócios)
+O modelo oficial tem uma tabela só por seção. Por isso, quem preenche escreve o nome da etapa no começo
+de cada linha (ex.: "V0 - ..."). Nenhum título novo é criado no Word.
+
+BASE DAS PERGUNTAS E DOS EXEMPLOS
+Template RE.GG.PRO.001 e Regimento RE.GG.NNG.001 (Comitês de Novos Negócios).
+As perguntas 6, 8 e 12 cobrem pontos que costumam faltar nos Regimentos: quórum, o que fazer se a reunião
+não acontece e prazos da ata e das pendências.
