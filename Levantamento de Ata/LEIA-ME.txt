@@ -1,0 +1,43 @@
+FORMULÁRIO DE ATA DE REUNIÃO - Grupo Gadens (em 03/11/2026 chamou-se "Súmula de Reunião"; voltou a "Ata" em 17/11/2026)
+
+O QUE É
+Página com perguntas sobre uma reunião. Ao final, gera um Word já no modelo de Ata de Reunião do Grupo Gadens
+("Mod Pauta-sumula de Reunião"): um formulário de uma página, feito de tabelas, sem logo.
+A ata não tem código nem controle de revisão: é um registro das decisões da reunião.
+Histórico: em 03/11/2026 o modelo passou a se chamar "Súmula de Reunião"; em 17/11/2026, a pedido do Bruno, voltou a "Ata de Reunião" (título do Word, nome do arquivo gerado, menu do painel e textos do formulário). O marcador interno {{SUMULA}} do modelo não mudou: não aparece para ninguém.
+
+ARQUIVOS
+- Formulário de Ata de Reunião - Interativo - Grupo Gadens.html : a página (abre no Chrome ou Edge; funciona sem internet).
+  O título dentro da página é "Ata de Reunião".
+- MODELO ATA com marcadores.docx : o modelo com marcadores {{...}} no lugar dos textos
+- montar_modelo_ata.py : gera o modelo (com marcadores e, se pedido, em branco). Não precisa mais do .doc: o layout está no script.
+- montar_formulario_ata.py : gera a página a partir do formulário de POP + o modelo com marcadores
+
+COMO REFAZER (se o modelo ou o formulário de POP mudarem)
+  python montar_modelo_ata.py "MODELO ATA com marcadores.docx" "<saida modelo em branco.docx>"
+  python montar_formulario_ata.py "<Formulário de Levantamento de Processo - Interativo - Grupo Gadens.html>" "MODELO ATA com marcadores.docx" "Formulário de Ata de Reunião - Interativo - Grupo Gadens.html"
+Depois, para atualizar o painel G-Docs (Organizador de documentos), rodar atualizar_formularios.py (ver a pasta
+"organizador de documentos").
+
+COMO AS PERGUNTAS SE LIGAM AO WORD
+  Identificação: Departamento    -> Departamento:
+                 Assunto         -> Assunto / Objetivo:   (também vai no nome do arquivo)
+                 Data da reunião -> Local / Data:         (junto com a pergunta 1)
+                 Nome de quem preenche -> Registro feito por:
+  1       -> Local / Data: (local)
+  2       -> Responsável:
+  3       -> Participantes: (um nome por linha; o Word coloca dois nomes por linha da tabela, em duas colunas)
+  4       -> Pauta da Reunião: (cada linha vira um parágrafo)
+  5       -> Ata da Reunião (cada linha vira um parágrafo)
+  6       -> Pendências: tabela Ação | Responsável | Data. A coluna OK sai em branco.
+  7       -> Documentos Anexos:
+  8       -> Data da próxima reunião:
+  9       -> apoio ao elaborador (não vai para o Word)
+  Data da Expedição: é a data de hoje, colocada automaticamente na hora de gerar.
+
+BASE
+"Mod Pauta-sumula de Reunião.doc" (modelo enviado em 03/11/2026): campos, ordem, largura das colunas, margens e página
+(carta) foram copiados dele. Diferenças de propósito: fonte Arial 10 (regra PO.GG.QLD.002; o modelo usa Times New Roman)
+e um nome de pessoa que aparecia em Participantes foi tratado como resto do modelo e não entra.
+Exemplos do botão "?": ata da reunião do Almoxarifado Central.
+O Word bloqueia .doc por padrão (Central de Confiabilidade > Bloqueio de Arquivos). Para ler um .doc, salvar como .docx.

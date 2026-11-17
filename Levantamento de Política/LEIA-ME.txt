@@ -1,0 +1,49 @@
+FORMULÁRIO DE POLÍTICA DE DEPARTAMENTO - Grupo Gadens
+
+O QUE É
+Página com perguntas em linguagem simples. Ao final, gera um Word já no template "GG00 - Modelo de Política de Departamento":
+cabeçalho com logo, sumário automático, 9 seções numeradas e tabela de revisão. Faz parte do grupo "Elaborar" do G-Docs.
+Política de Compliance NÃO entra: só o setor de Compliance elabora (decisão do Bruno em 05/11/2026).
+
+ARQUIVOS
+- GG00 - Modelo de Política de Departamento.docx : template original (cópia de Downloads, 05/11/2026). Não editar.
+- MODELO POLITICA com marcadores.docx : o template com marcadores {{...}} no lugar dos textos de exemplo
+- montar_modelo_politica.py : gera o modelo com marcadores a partir do GG00
+- montar_formulario_politica.py : gera a página a partir do formulário de POP + o modelo com marcadores
+- Formulário de Política de Departamento - Interativo - Grupo Gadens.html : a página (abre no Chrome ou Edge; funciona sem internet)
+
+COMO REFAZER (se o template ou o formulário de POP mudarem)
+  python montar_modelo_politica.py "GG00 - Modelo de Política de Departamento.docx" "MODELO POLITICA com marcadores.docx"
+  python montar_formulario_politica.py "<Formulário de Levantamento de Processo - Interativo - Grupo Gadens.html>" "MODELO POLITICA com marcadores.docx" "Formulário de Política de Departamento - Interativo - Grupo Gadens.html"
+Depois, para atualizar o painel G-Docs, rodar atualizar_formularios.py com 6 caminhos (POP, IT, Regimento, Súmula, Política, painel).
+
+REGRAS COMBINADAS COM O BRUNO (05/11/2026)
+- Número da política: fica "GGXX" com o XX em VERMELHO. Quem define a numeração é o setor de Compliance.
+- Próxima revisão = data de aprovação + 12 meses (formato DD/MM/AA; 29/02 vira 28/02). A regra vem da GG01-C
+  (Governança das Políticas): "Todas as políticas deverão ser revisadas anualmente". Sem data de aprovação: "a definir".
+- Status do cabeçalho sai "Criação".
+- Elaborado por = quem preenche; Revisada por = gestor do processo; Aprovado por = diretor da área (nomes digitados; sem nome: "a definir").
+- Sem anexos: o Word sai com a frase da política publicada GG01: "Esta Política não possui anexos vinculados no momento de sua publicação."
+- O formulário pede ao Word para atualizar os campos ao abrir (é o sumário): o Word pergunta e a pessoa responde "Sim".
+
+COMO AS PERGUNTAS SE LIGAM AO WORD
+  Identificação: Nome de quem preenche -> Elaborado por (rodapé e tabela)
+                 Nome do processo      -> título, cabeçalho, título do item 4 e sumário
+                 Data de preenchimento -> Elaborado em (tabela de revisão)
+  1  -> 1 OBJETIVO                      2  -> 2 APLICAÇÃO               3  -> 3 RESPONSÁVEL PELO PROCESSO
+  4  -> 4 PROCESSOS DE (NOME) NO GRUPO GADENS (visão geral)
+  5  -> subitens 4.1, 4.2... (título em negrito + texto)
+  6  -> 5 ANEXOS (um por linha: nome — link)
+  7  -> 6 TERMOS E DEFINIÇÕES (termo em negrito + definição)
+  8  -> 7 PRÁTICAS OBRIGATÓRIAS (prática numerada em negrito/itálico + o porquê abaixo)
+  9  -> 8 DÚVIDAS
+  10 -> Revisada por       11 -> Aprovado por       12 -> Revisado em       13 -> Aprovado em (e Data de Aprovação do rodapé)
+  14 -> apoio ao elaborador (não vai para o Word)
+
+BASE DOS EXEMPLOS DO BOTÃO "?"
+Só texto da política publicada GG01 - Política Corporativa de Gestão de Pagamentos (Central de Documentos), conferido palavra por palavra.
+
+NOTA SOBRE O MODELO ORIGINAL
+O arquivo "GG00 - Modelo de Política de Departamento.docx" (o modelo oficial, que serve de base para montar_modelo_politica.py)
+NÃO fica neste repositório: ele é o modelo interno do Grupo Gadens e traz nomes de pessoas nos dados do arquivo.
+Para refazer o modelo com marcadores, peça o original ao Bruno e coloque nesta pasta.
