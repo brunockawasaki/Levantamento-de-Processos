@@ -237,6 +237,9 @@ ENGINE_JS = r'''function buildAplicacaoText(){
   }
 
   function buildFilledDocumentXml(xml){
+    // Elaborador: o cabecalho e a tabela Controle de emissao usam o marcador {{ELABORADOR}} (3 lugares no modelo)
+    var nomeElab = String((document.getElementById("id_nome") || {}).value || "").replace(/\s+/g, " ").trim();
+    xml = xml.split("{{ELABORADOR}}").join(escapeHtml(nomeElab || "(não informado)"));
     xml = substituteSimpleToken(xml, "TITULO", document.getElementById("id_tarefa").value);
     xml = substituteSimpleToken(xml, "TITULO", document.getElementById("id_tarefa").value);
     xml = fillToken(xml, "OBJETIVO", joinText(["q1","q2"]), "(não informado)");

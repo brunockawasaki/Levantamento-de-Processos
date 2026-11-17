@@ -528,6 +528,9 @@ ENGINE_JS = r'''function buildAplicacaoText(){
 
   function buildFilledDocumentXml(xml){
     docMedia = [];
+    // Elaborador: o cabecalho e a tabela Controle de emissao usam o marcador {{ELABORADOR}} (3 lugares no modelo)
+    var nomeElab = String((document.getElementById("id_nome") || {}).value || "").replace(/\s+/g, " ").trim();
+    xml = xml.split("{{ELABORADOR}}").join(escapeHtml(nomeElab || "(não informado)"));
     var tarefa = document.getElementById("id_tarefa").value.trim();
     xml = substituteTokenAll(xml, "TITULO", tarefa ? tarefa.toUpperCase() : "TÍTULO DA INSTRUÇÃO DE TRABALHO");
     xml = substituteSimpleToken(xml, "OBJETIVO", endPunct(capFirstText(document.getElementById("q1").value)));

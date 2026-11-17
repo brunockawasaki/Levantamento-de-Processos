@@ -16,7 +16,7 @@ Marcadores colocados (so no corpo, igual aos modelos de POP e IT):
 O Controle de Emissao, a capa (codigo, data, aprovador...), o cabecalho e o rodape ficam como no
 template (a equipe de Processos preenche).
 """
-import sys
+import sys, os
 import docx
 from docx.oxml.ns import qn
 from docx.oxml import parse_xml
@@ -135,6 +135,10 @@ def main(src, dst):
     print("titulos da capa trocados:", n)
 
     d.save(dst)
+    # Elaborador: o nome sai do formulario ("Nome de quem preenche"). Regra em ../ajustar_elaborador_modelo.py (13/11/2026)
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    import ajustar_elaborador_modelo
+    ajustar_elaborador_modelo.processa(dst)
     print("ok ->", dst)
 
 
