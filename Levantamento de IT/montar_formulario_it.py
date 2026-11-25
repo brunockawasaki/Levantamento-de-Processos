@@ -531,6 +531,7 @@ ENGINE_JS = r'''function buildAplicacaoText(){
     // Elaborador: o cabecalho e a tabela Controle de emissao usam o marcador {{ELABORADOR}} (3 lugares no modelo)
     var nomeElab = String((document.getElementById("id_nome") || {}).value || "").replace(/\s+/g, " ").trim();
     xml = xml.split("{{ELABORADOR}}").join(escapeHtml(nomeElab || "(não informado)"));
+    xml = marcadoresCabecalho(xml);   // {{SIGLA_SETOR}} e {{APROVADOR}} (25/11/2026); helpers vem do formulario de POP
     var tarefa = document.getElementById("id_tarefa").value.trim();
     xml = substituteTokenAll(xml, "TITULO", tarefa ? tarefa.toUpperCase() : "TÍTULO DA INSTRUÇÃO DE TRABALHO");
     xml = substituteSimpleToken(xml, "OBJETIVO", endPunct(capFirstText(document.getElementById("q1").value)));
@@ -550,6 +551,7 @@ HANDLER_JS = r'''      var zip = fflate.unzipSync(templateBytes);
       var xmlText = dec.decode(docXmlBytes);
       var filledXml = buildFilledDocumentXml(xmlText);
       zip["word/document.xml"] = enc.encode(filledXml);
+      marcadoresPartes(zip, enc, dec);
       if(docMedia.length){
         var relsXml = dec.decode(zip["word/_rels/document.xml.rels"]);
         var add = docMedia.map(function(m){
@@ -576,7 +578,7 @@ HANDLER_JS = r'''      var zip = fflate.unzipSync(templateBytes);
       a.click();
       document.body.removeChild(a);
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      statusEl.textContent = "Word gerado: " + filename + ". Abra e revise: confira a ordem das etapas e as imagens. Código do documento, aprovações e controle de emissão continuam sendo preenchidos pela equipe de Processos.";
+      statusEl.textContent = "Word gerado: " + filename + ". Abra e revise: confira a ordem das etapas e as imagens. O código do documento já sai com a sigla da empresa e do setor; a equipe de Processos preenche o número de sequência (XXX), as aprovações e o controle de emissão.";
       statusEl.classList.remove("hidden");
     }catch(err){'''
 

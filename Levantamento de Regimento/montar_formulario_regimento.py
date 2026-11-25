@@ -240,6 +240,7 @@ ENGINE_JS = r'''function buildAplicacaoText(){
     // Elaborador: o cabecalho e a tabela Controle de emissao usam o marcador {{ELABORADOR}} (3 lugares no modelo)
     var nomeElab = String((document.getElementById("id_nome") || {}).value || "").replace(/\s+/g, " ").trim();
     xml = xml.split("{{ELABORADOR}}").join(escapeHtml(nomeElab || "(não informado)"));
+    xml = marcadoresCabecalho(xml);   // {{SIGLA_SETOR}} e {{APROVADOR}} (25/11/2026); helpers vem do formulario de POP
     xml = substituteSimpleToken(xml, "TITULO", document.getElementById("id_tarefa").value);
     xml = substituteSimpleToken(xml, "TITULO", document.getElementById("id_tarefa").value);
     xml = fillToken(xml, "OBJETIVO", joinText(["q1","q2"]), "(não informado)");
@@ -345,8 +346,8 @@ def main(pop_html, modelo_docx, out_html):
           block = block.replace(re, '<w:t xml:space="preserve">' + escapeHtml(val) + '</w:t>');""",
                """          block = fillToken(block, tok, rowValues[i], "");""")
     s = rep(s, 'var filename = "POP - " + tarefa', 'var filename = "Regimento - " + tarefa')
-    s = rep(s, "Abra e revise antes de enviar à equipe de Processos — código do documento, fluxo Bizagi, aprovações e controle de emissão continuam sendo preenchidos por eles.",
-               "Abra e revise antes de enviar à equipe de Processos — código do documento, aprovações e controle de emissão continuam sendo preenchidos por eles.")
+    s = rep(s, "Abra e revise antes de enviar à equipe de Processos. O código do documento já sai com a sigla da empresa e do setor; a equipe de Processos preenche o número de sequência (XXX), o fluxo Bizagi, as aprovações e o controle de emissão.",
+               "Abra e revise antes de enviar à equipe de Processos. O código do documento já sai com a sigla da empresa e do setor; a equipe de Processos preenche o número de sequência (XXX), as aprovações e o controle de emissão.")
 
     # --- modo por voz
     s = rep(s, 'title:"Qual é a área dona do processo?", dica:"Exemplo: Contas a receber."',

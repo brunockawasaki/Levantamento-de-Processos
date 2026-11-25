@@ -97,6 +97,8 @@ def main(src, dst):
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
     import ajustar_elaborador_modelo
     ajustar_elaborador_modelo.processa(dst)
+    import ajustar_sigla_aprovador   # sigla do setor e aprovador (25/11/2026)
+    ajustar_sigla_aprovador.processa(dst)
     print("ok ->", dst)
 
 
